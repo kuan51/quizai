@@ -9,14 +9,7 @@ import {
   getRateLimitHeaders,
   rateLimitedResponse,
 } from "@/lib/rate-limit";
-
-interface GradeRequest {
-  question: string;
-  correctAnswer: string;
-  userAnswer: string;
-  questionType: "essay" | "short_answer";
-  provider?: "openai" | "anthropic";
-}
+import { GradeRequestSchema, validateRequest } from "@/lib/validations";
 
 // POST /api/ai - Grade essay/short answer questions
 export async function POST(request: Request) {
@@ -34,37 +27,25 @@ export async function POST(request: Request) {
       return rateLimitedResponse(rateLimit);
     }
 
-    const body: GradeRequest = await request.json();
-    const { question, correctAnswer, userAnswer, questionType, provider } =
-      body;
+    // Parse and validate request body with Zod
+    const body = await request.json();
+    const validation = validateRequest(GradeRequestSchema, body);
 
-    // Validation
-    if (!question || !correctAnswer || !userAnswer || !questionType) {
+    if (!validation.success) {
       logger.security("input.validation_failed", {
         userId: session.user.id,
         ...reqContext,
-        message: "Missing required fields for grading",
+        message: "Schema validation failed for grading",
+        metadata: { error: validation.error },
       });
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: validation.error },
         { status: 400, headers: getRateLimitHeaders(rateLimit) }
       );
     }
 
-    if (!["essay", "short_answer"].includes(questionType)) {
-      return NextResponse.json(
-        { error: "Invalid question type for AI grading" },
-        { status: 400, headers: getRateLimitHeaders(rateLimit) }
-      );
-    }
-
-    // Input length validation
-    if (userAnswer.length > 10000) {
-      return NextResponse.json(
-        { error: "Answer exceeds maximum length" },
-        { status: 400, headers: getRateLimitHeaders(rateLimit) }
-      );
-    }
+    const { question, correctAnswer, userAnswer, questionType, provider } =
+      validation.data;
 
     // Sanitize user answer to prevent prompt injection
     const sanitizedAnswer = sanitizeForPrompt(userAnswer, {

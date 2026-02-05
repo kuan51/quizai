@@ -9,6 +9,7 @@ import {
   getRateLimitHeaders,
   rateLimitedResponse,
 } from "@/lib/rate-limit";
+import { CreateQuizRequestSchema, validateRequest } from "@/lib/validations";
 
 // GET /api/quizzes - List all quizzes for the current user
 export async function GET() {
@@ -63,22 +64,25 @@ export async function POST(request: Request) {
       return rateLimitedResponse(rateLimit);
     }
 
+    // Parse and validate request body with Zod
     const body = await request.json();
-    const { title, description, difficulty, questionTypes } = body;
+    const validation = validateRequest(CreateQuizRequestSchema, body);
 
-    if (!title || !difficulty || !questionTypes) {
+    if (!validation.success) {
       logger.security("input.validation_failed", {
         userId: session.user.id,
         path: "/api/quizzes",
         method: "POST",
-        message: "Missing required fields",
+        message: "Schema validation failed",
+        metadata: { error: validation.error },
       });
       return NextResponse.json(
-        { error: "Missing required fields" },
+        { error: validation.error },
         { status: 400, headers: getRateLimitHeaders(rateLimit) }
       );
     }
 
+    const { title, description, difficulty, questionTypes } = validation.data;
     const id = crypto.randomUUID();
     const newQuiz = await db()
       .insert(quizzes)

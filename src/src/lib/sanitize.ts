@@ -33,11 +33,17 @@ const INJECTION_PATTERNS = [
 
 /**
  * Characters that could be used to break out of quoted contexts
+ * or hide malicious content
  */
 const ESCAPE_SEQUENCES = [
   /\\n\\n/g, // Escaped newlines that might be interpreted
   /\x00/g, // Null bytes
   /\x1b/g, // Escape characters
+  // Zero-width characters that can hide content
+  /[\u200B-\u200D\u2060\uFEFF]/g, // Zero-width space, joiner, non-joiner, word joiner, BOM
+  /[\u2028\u2029]/g, // Line/paragraph separators (can break parsing)
+  /[\u202A-\u202E]/g, // Bidirectional text control characters
+  /[\u2066-\u2069]/g, // Bidirectional isolate characters
 ];
 
 export interface SanitizationResult {

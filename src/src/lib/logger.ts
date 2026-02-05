@@ -65,6 +65,7 @@ export const logger = {
   debug: baseLogger.debug.bind(baseLogger),
 
   // Security event logging
+  // Note: Pino automatically adds timestamp via stdTimeFunctions.isoTime
   security: (
     event: SecurityEventType,
     data: {
@@ -81,11 +82,11 @@ export const logger = {
     baseLogger.info({
       securityEvent: event,
       ...data,
-      timestamp: new Date().toISOString(),
     });
   },
 
   // Audit logging for compliance
+  // Note: Pino automatically adds timestamp via stdTimeFunctions.isoTime
   audit: (
     action: string,
     data: {
@@ -99,7 +100,6 @@ export const logger = {
       audit: true,
       action,
       ...data,
-      timestamp: new Date().toISOString(),
     });
   },
 };

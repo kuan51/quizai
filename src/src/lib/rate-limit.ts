@@ -10,9 +10,35 @@ interface RateLimitConfig {
   maxRequests: number; // Max requests per window
 }
 
-// In-memory store for rate limiting
-// In production, consider using Redis for distributed rate limiting
+/**
+ * In-memory store for rate limiting
+ *
+ * PRODUCTION NOTE: For distributed deployments (multiple instances, serverless),
+ * replace this with Redis-based storage:
+ *
+ * ```typescript
+ * import { Redis } from "@upstash/redis";
+ * import { Ratelimit } from "@upstash/ratelimit";
+ *
+ * const redis = Redis.fromEnv();
+ * const ratelimit = new Ratelimit({
+ *   redis,
+ *   limiter: Ratelimit.slidingWindow(10, "10 s"),
+ *   analytics: true,
+ * });
+ * ```
+ *
+ * Benefits of Redis:
+ * - Works across multiple instances/containers
+ * - Persists across serverless cold starts
+ * - Supports sliding window algorithms
+ * - Built-in analytics and monitoring
+ */
 const rateLimitStore = new Map<string, RateLimitEntry>();
+
+// Track last cleanup time for lazy cleanup pattern
+let lastCleanupTime = Date.now();
+const CLEANUP_INTERVAL_MS = 60000; // 1 minute
 
 // Default rate limit configurations per endpoint type
 export const rateLimitConfigs = {
@@ -26,15 +52,27 @@ export const rateLimitConfigs = {
   auth: { windowMs: 300000, maxRequests: 10 }, // 10 per 5 minutes
 };
 
-// Clean up expired entries periodically
-setInterval(() => {
+/**
+ * Lazy cleanup of expired entries
+ * Called on each rate limit check instead of using setInterval
+ * This pattern is serverless/edge-compatible
+ */
+function cleanupExpiredEntries(): void {
   const now = Date.now();
+
+  // Only cleanup if enough time has passed since last cleanup
+  if (now - lastCleanupTime < CLEANUP_INTERVAL_MS) {
+    return;
+  }
+
+  lastCleanupTime = now;
+
   for (const [key, entry] of rateLimitStore.entries()) {
     if (now > entry.resetTime) {
       rateLimitStore.delete(key);
     }
   }
-}, 60000); // Clean up every minute
+}
 
 export interface RateLimitResult {
   allowed: boolean;
@@ -43,17 +81,24 @@ export interface RateLimitResult {
   retryAfter?: number;
 }
 
+export type IdentifierType = "userId" | "ip" | "anonymous";
+
 /**
  * Check if a request should be rate limited
- * @param identifier - Unique identifier (userId or IP)
+ * @param identifier - Unique identifier (userId or IP address)
  * @param endpoint - Endpoint type for config lookup
  * @param config - Optional custom config
+ * @param identifierType - Type of identifier for logging semantics
  */
 export function checkRateLimit(
   identifier: string,
   endpoint: keyof typeof rateLimitConfigs = "api",
-  config?: RateLimitConfig
+  config?: RateLimitConfig,
+  identifierType: IdentifierType = "userId"
 ): RateLimitResult {
+  // Perform lazy cleanup before processing
+  cleanupExpiredEntries();
+
   const { windowMs, maxRequests } = config || rateLimitConfigs[endpoint];
   const now = Date.now();
   const key = `${endpoint}:${identifier}`;
@@ -77,12 +122,23 @@ export function checkRateLimit(
 
   if (!allowed) {
     const retryAfter = Math.ceil((entry.resetTime - now) / 1000);
-    logger.security("api.rate_limited", {
-      userId: identifier,
+
+    // Log with proper identifier semantics
+    const logData: Parameters<typeof logger.security>[1] = {
       path: endpoint,
       message: `Rate limit exceeded: ${entry.count}/${maxRequests}`,
-      metadata: { retryAfter },
-    });
+      metadata: { retryAfter, identifierType },
+    };
+
+    // Only set userId if the identifier is actually a userId
+    if (identifierType === "userId") {
+      logData.userId = identifier;
+    } else {
+      logData.ip = identifier;
+    }
+
+    logger.security("api.rate_limited", logData);
+
     return {
       allowed: false,
       remaining: 0,
