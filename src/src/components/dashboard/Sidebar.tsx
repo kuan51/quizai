@@ -80,7 +80,7 @@ export function Sidebar() {
 
         {/* New Quiz Button */}
         <Link
-          href="/quiz/new"
+          href="/dashboard/quiz/new"
           className="flex items-center gap-3 p-3 rounded-lg mb-4 bg-primary-600 hover:bg-primary-700 transition-colors text-white"
         >
           <Plus size={20} />
@@ -107,9 +107,9 @@ export function Sidebar() {
                 {quizzes.map((quiz) => (
                   <Link
                     key={quiz.id}
-                    href={`/quiz/${quiz.id}`}
+                    href={`/dashboard/quiz/${quiz.id}`}
                     className={`flex items-center gap-2 p-2 rounded-lg text-sm transition-colors ${
-                      pathname === `/quiz/${quiz.id}`
+                      pathname === `/dashboard/quiz/${quiz.id}`
                         ? "bg-slate-800 text-white"
                         : "text-slate-400 hover:bg-slate-800 hover:text-white"
                     }`}

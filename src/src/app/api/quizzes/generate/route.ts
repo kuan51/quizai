@@ -3,63 +3,76 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { quizzes, questions } from "@/lib/db/schema";
 import { generateQuiz } from "@/lib/ai";
-import type { Difficulty, QuestionType } from "@/types";
-
-interface GenerateRequest {
-  title: string;
-  studyMaterial: string;
-  questionCount: number;
-  difficulty: Difficulty;
-  questionTypes: QuestionType[];
-}
+import { logger, getRequestContext } from "@/lib/logger";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  rateLimitedResponse,
+} from "@/lib/rate-limit";
+import {
+  GenerateQuizRequestSchema,
+  validateRequest,
+} from "@/lib/validations";
+import type { QuestionType } from "@/types";
 
 // POST /api/quizzes/generate - Generate a quiz using AI
 export async function POST(request: Request) {
+  const reqContext = getRequestContext(request);
+
   try {
     const session = await auth();
     if (!session?.user?.id) {
+      logger.security("api.access", {
+        ...reqContext,
+        statusCode: 401,
+        message: "Unauthorized access attempt",
+      });
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const body: GenerateRequest = await request.json();
-    const { title, studyMaterial, questionCount, difficulty, questionTypes } = body;
+    // Rate limiting for AI generation (expensive operation)
+    const rateLimit = checkRateLimit(session.user.id, "aiGeneration");
+    if (!rateLimit.allowed) {
+      return rateLimitedResponse(rateLimit);
+    }
 
-    // Validation
-    if (!title || !studyMaterial || !questionCount || !difficulty || !questionTypes) {
+    // Parse and validate request body with Zod
+    const body = await request.json();
+    const validation = validateRequest(GenerateQuizRequestSchema, body);
+
+    if (!validation.success) {
+      logger.security("input.validation_failed", {
+        userId: session.user.id,
+        ...reqContext,
+        message: "Schema validation failed",
+        metadata: { error: validation.error },
+      });
       return NextResponse.json(
-        { error: "Missing required fields" },
-        { status: 400 }
+        { error: validation.error },
+        { status: 400, headers: getRateLimitHeaders(rateLimit) }
       );
     }
 
-    if (questionCount < 5 || questionCount > 50) {
-      return NextResponse.json(
-        { error: "Question count must be between 5 and 50" },
-        { status: 400 }
-      );
-    }
+    const { title, studyMaterial, questionCount, difficulty, questionTypes } =
+      validation.data;
 
-    if (questionTypes.length === 0) {
-      return NextResponse.json(
-        { error: "At least one question type must be selected" },
-        { status: 400 }
-      );
-    }
-
-    if (studyMaterial.length < 50) {
-      return NextResponse.json(
-        { error: "Study material must be at least 50 characters" },
-        { status: 400 }
-      );
-    }
-
-    // Generate quiz using AI
-    const generatedQuiz = await generateQuiz({
-      studyMaterial,
-      questionCount,
-      difficulty,
-      questionTypes,
+    logger.security("api.access", {
+      userId: session.user.id,
+      ...reqContext,
+      message: "Quiz generation started",
     });
+
+    // Generate quiz using AI (with sanitization and validation)
+    const generatedQuiz = await generateQuiz(
+      {
+        studyMaterial,
+        questionCount,
+        difficulty,
+        questionTypes,
+      },
+      undefined,
+      session.user.id
+    );
 
     // Create quiz in database
     const quizId = crypto.randomUUID();
@@ -90,6 +103,16 @@ export async function POST(request: Request) {
 
     await db().insert(questions).values(questionInserts);
 
+    logger.audit("quiz.create", {
+      userId: session.user.id,
+      resourceType: "quiz",
+      resourceId: quizId,
+      changes: {
+        questionCount: generatedQuiz.questions.length,
+        difficulty,
+      },
+    });
+
     // Return the created quiz
     return NextResponse.json(
       {
@@ -98,12 +121,20 @@ export async function POST(request: Request) {
         questionCount: generatedQuiz.questions.length,
         difficulty,
       },
-      { status: 201 }
+      { status: 201, headers: getRateLimitHeaders(rateLimit) }
     );
   } catch (error) {
-    console.error("Error generating quiz:", error);
+    logger.security("api.error", {
+      ...reqContext,
+      message: "Quiz generation failed",
+      metadata: {
+        error: error instanceof Error ? error.message : "Unknown error",
+      },
+    });
+
+    // Don't expose internal error details to client
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to generate quiz" },
+      { error: "Failed to generate quiz. Please try again." },
       { status: 500 }
     );
   }
