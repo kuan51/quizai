@@ -1,0 +1,280 @@
+# QuizAI Deployment Guide
+
+This guide covers deploying QuizAI to various environments.
+
+## Docker Deployment (Recommended)
+
+### Prerequisites
+
+- Docker Engine 20.10+
+- Docker Compose 2.0+
+
+### Quick Start
+
+1. Navigate to the build directory:
+   ```bash
+   cd build
+   ```
+
+2. Create and configure the environment file:
+   ```bash
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+3. Build and start the containers:
+   ```bash
+   docker-compose up -d --build
+   ```
+
+4. Access the application at http://localhost:3000
+
+### Production Configuration
+
+For production deployments, update your `.env` file:
+
+```env
+# Use your actual domain
+NEXTAUTH_URL=https://yourdomain.com
+
+# Generate a strong secret
+NEXTAUTH_SECRET=your-32-character-secret
+
+# Configure OAuth with production URLs
+GOOGLE_CLIENT_ID=your-production-client-id
+GOOGLE_CLIENT_SECRET=your-production-secret
+```
+
+### SSL/TLS with Nginx
+
+Example nginx configuration for reverse proxy with SSL:
+
+```nginx
+server {
+    listen 80;
+    server_name yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+### Docker Compose with Nginx
+
+Extended docker-compose.yml with nginx:
+
+```yaml
+version: "3.8"
+
+services:
+  quiz-app:
+    build:
+      context: ..
+      dockerfile: build/Dockerfile
+    expose:
+      - "3000"
+    environment:
+      # ... your environment variables
+    volumes:
+      - quiz-data:/app/data
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - /path/to/certs:/etc/nginx/certs:ro
+    depends_on:
+      - quiz-app
+    restart: unless-stopped
+
+volumes:
+  quiz-data:
+```
+
+---
+
+## Cloud Platform Deployments
+
+### Vercel
+
+1. Push your code to GitHub
+2. Import the project in Vercel
+3. Set the root directory to `src`
+4. Configure environment variables in Vercel dashboard
+5. Deploy
+
+Note: For SQLite persistence on Vercel, consider using:
+- Turso (SQLite edge database)
+- PlanetScale (MySQL compatible)
+
+### Railway
+
+1. Connect your GitHub repository
+2. Set the root directory to `src`
+3. Add environment variables
+4. Railway will auto-detect Next.js and deploy
+
+### Fly.io
+
+1. Install flyctl: `brew install flyctl`
+2. Create a fly.toml in the src directory:
+
+```toml
+app = "quizai"
+primary_region = "ord"
+
+[build]
+  dockerfile = "../build/Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+
+[[mounts]]
+  source = "quiz_data"
+  destination = "/app/data"
+```
+
+3. Deploy:
+```bash
+fly launch
+fly secrets set NEXTAUTH_SECRET=your-secret
+fly secrets set ANTHROPIC_API_KEY=your-key
+# ... other secrets
+fly deploy
+```
+
+---
+
+## Database Considerations
+
+### SQLite Persistence
+
+The default SQLite database works well for:
+- Single-instance deployments
+- Low to moderate traffic
+- Development and testing
+
+For SQLite in Docker, ensure:
+- Volume is mounted for data persistence
+- Backup strategy is in place
+
+### Database Backup
+
+Create a backup script:
+
+```bash
+#!/bin/bash
+# backup.sh
+BACKUP_DIR=/path/to/backups
+DATE=$(date +%Y%m%d_%H%M%S)
+docker cp quizai_quiz-app_1:/app/data/quiz.db $BACKUP_DIR/quiz_$DATE.db
+```
+
+### Scaling Considerations
+
+For high-traffic deployments, consider:
+- PostgreSQL with connection pooling
+- Redis for session storage
+- CDN for static assets
+
+---
+
+## Monitoring
+
+### Health Checks
+
+The `/api/health` endpoint returns:
+```json
+{
+  "status": "ok",
+  "timestamp": "2024-01-15T10:30:00.000Z",
+  "version": "1.0.0"
+}
+```
+
+### Docker Health Check
+
+The docker-compose.yml includes a health check:
+```yaml
+healthcheck:
+  test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+```
+
+### Logging
+
+View container logs:
+```bash
+docker-compose logs -f quiz-app
+```
+
+---
+
+## Security Checklist
+
+- [ ] Generate strong NEXTAUTH_SECRET (32+ characters)
+- [ ] Use HTTPS in production
+- [ ] Configure OAuth redirect URIs correctly
+- [ ] Keep API keys secure (never commit to git)
+- [ ] Enable firewall rules
+- [ ] Regular security updates
+- [ ] Implement rate limiting
+- [ ] Set up monitoring and alerting
+
+---
+
+## Troubleshooting
+
+### Container Won't Start
+
+Check logs:
+```bash
+docker-compose logs quiz-app
+```
+
+Common issues:
+- Missing environment variables
+- Port already in use
+- Invalid OAuth configuration
+
+### Database Errors
+
+Ensure volume permissions:
+```bash
+docker exec -it quizai_quiz-app_1 ls -la /app/data
+```
+
+### OAuth Redirect Errors
+
+Verify:
+1. NEXTAUTH_URL matches your domain exactly
+2. OAuth provider redirect URIs are configured
+3. HTTPS is being used in production
