@@ -54,4 +54,4 @@ docker-compose up -d
 
 ## License
 
-MIT
+GNU GPLv3
