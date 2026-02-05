@@ -1,5 +1,7 @@
 import Database from "better-sqlite3";
 import { drizzle } from "drizzle-orm/better-sqlite3";
+import * as fs from "fs";
+import * as path from "path";
 import * as schema from "./schema";
 
 // Database file path - uses environment variable or default
@@ -13,8 +15,6 @@ let _sqlite: Database.Database | null = null;
 let _initialized = false;
 
 function ensureDataDir() {
-  const fs = require("fs");
-  const path = require("path");
   const dbDir = path.dirname(dbPath);
   if (!fs.existsSync(dbDir)) {
     fs.mkdirSync(dbDir, { recursive: true });

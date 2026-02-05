@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { Card } from "@/components/ui/Card";
 import type { Difficulty, QuestionType } from "@/types";
 import { difficultyLabels, questionTypeLabels } from "@/types";
 
@@ -63,7 +62,7 @@ export function QuizForm() {
       }
 
       const quiz = await response.json();
-      router.push(`/quiz/${quiz.id}`);
+      router.push(`/dashboard/quiz/${quiz.id}`);
     } catch (err) {
       console.error("Error creating quiz:", err);
       setError(err instanceof Error ? err.message : "Failed to create quiz. Please try again.");

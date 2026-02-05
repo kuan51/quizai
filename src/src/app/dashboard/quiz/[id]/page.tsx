@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, useCallback, use } from "react";
 import { useRouter } from "next/navigation";
 import { Header } from "@/components/dashboard/Header";
 import { QuestionRenderer } from "@/components/quiz/QuestionRenderer";
@@ -50,11 +50,7 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [startTime] = useState(Date.now());
 
-  useEffect(() => {
-    fetchQuiz();
-  }, [id]);
-
-  const fetchQuiz = async () => {
+  const fetchQuiz = useCallback(async () => {
     try {
       const response = await fetch(`/api/quizzes/${id}`);
       if (!response.ok) {
@@ -67,7 +63,11 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchQuiz();
+  }, [fetchQuiz]);
 
   const handleAnswer = (answer: string) => {
     if (!quiz) return;
