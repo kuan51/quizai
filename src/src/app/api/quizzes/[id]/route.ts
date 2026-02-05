@@ -3,6 +3,13 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { quizzes, questions } from "@/lib/db/schema";
 import { eq, and } from "drizzle-orm";
+import { logger } from "@/lib/logger";
+import { safeJsonParse } from "@/lib/sanitize";
+import {
+  checkRateLimit,
+  getRateLimitHeaders,
+  rateLimitedResponse,
+} from "@/lib/rate-limit";
 
 // GET /api/quizzes/[id] - Get a quiz with its questions
 export async function GET(
@@ -15,6 +22,12 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate limiting
+    const rateLimit = checkRateLimit(session.user.id, "api");
+    if (!rateLimit.allowed) {
+      return rateLimitedResponse(rateLimit);
+    }
+
     const { id } = await params;
 
     // Get the quiz
@@ -25,7 +38,10 @@ export async function GET(
       .limit(1);
 
     if (quiz.length === 0) {
-      return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Quiz not found" },
+        { status: 404, headers: getRateLimitHeaders(rateLimit) }
+      );
     }
 
     // Get the questions
@@ -35,19 +51,30 @@ export async function GET(
       .where(eq(questions.quizId, id))
       .orderBy(questions.order);
 
-    // Parse options from JSON string
+    // Safe JSON parsing for options
     const parsedQuestions = quizQuestions.map((q) => ({
       ...q,
-      options: q.options ? JSON.parse(q.options) : null,
+      options: q.options
+        ? safeJsonParse<string[] | null>(q.options, null).data
+        : null,
     }));
 
-    return NextResponse.json({
-      ...quiz[0],
-      questionTypes: JSON.parse(quiz[0].questionTypes),
-      questions: parsedQuestions,
-    });
+    // Safe JSON parsing for questionTypes
+    const { data: questionTypes } = safeJsonParse<string[]>(
+      quiz[0].questionTypes,
+      []
+    );
+
+    return NextResponse.json(
+      {
+        ...quiz[0],
+        questionTypes,
+        questions: parsedQuestions,
+      },
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (error) {
-    console.error("Error fetching quiz:", error);
+    logger.error({ error }, "Error fetching quiz");
     return NextResponse.json(
       { error: "Failed to fetch quiz" },
       { status: 500 }
@@ -66,6 +93,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Rate limiting
+    const rateLimit = checkRateLimit(session.user.id, "api");
+    if (!rateLimit.allowed) {
+      return rateLimitedResponse(rateLimit);
+    }
+
     const { id } = await params;
 
     // Verify ownership
@@ -76,15 +109,27 @@ export async function DELETE(
       .limit(1);
 
     if (quiz.length === 0) {
-      return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Quiz not found" },
+        { status: 404, headers: getRateLimitHeaders(rateLimit) }
+      );
     }
 
     // Delete the quiz (questions will be cascade deleted)
     await db().delete(quizzes).where(eq(quizzes.id, id));
 
-    return NextResponse.json({ success: true });
+    logger.audit("quiz.delete", {
+      userId: session.user.id,
+      resourceType: "quiz",
+      resourceId: id,
+    });
+
+    return NextResponse.json(
+      { success: true },
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (error) {
-    console.error("Error deleting quiz:", error);
+    logger.error({ error }, "Error deleting quiz");
     return NextResponse.json(
       { error: "Failed to delete quiz" },
       { status: 500 }
