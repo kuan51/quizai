@@ -49,7 +49,7 @@ const rateLimitConfigs = {
   // Standard API limit
   api: { windowMs: 60000, maxRequests: 60 }, // 60 per minute
   // Auth endpoints (prevent brute force)
-  auth: { windowMs: 300000, maxRequests: 10 }, // 10 per 5 minutes
+  auth: { windowMs: 300000, maxRequests: 30 }, // 30 per 5 minutes
 };
 
 /**

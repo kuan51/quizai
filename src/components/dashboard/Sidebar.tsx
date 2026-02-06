@@ -7,6 +7,7 @@ import { signOut } from "next-auth/react";
 import { Plus, Home, LogOut, Menu, X, BookOpen } from "lucide-react";
 import type { Difficulty } from "@/types";
 import { difficultyLabels } from "@/types";
+import { SettingsPopover } from "@/components/dashboard/SettingsPopover";
 
 interface Quiz {
   id: string;
@@ -44,22 +45,22 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`h-screen bg-primary-950 text-white flex flex-col transition-all duration-300 ${
+      className={`h-screen bg-[var(--sidebar-bg)] text-[var(--sidebar-text-active)] flex flex-col transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Header */}
-      <div className="p-4 border-b border-primary-900 flex items-center justify-between">
+      <div className="p-4 border-b border-[var(--sidebar-border)] flex items-center justify-between">
         {!isCollapsed && (
           <Link href="/dashboard" className="flex items-center">
-            <span className="font-serif text-xl tracking-tight text-white/90">
+            <span className="font-serif text-xl tracking-tight opacity-90">
               QuizAI
             </span>
           </Link>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-stone-400 hover:text-stone-200"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-hover)]"
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <Menu size={20} /> : <X size={20} />}
@@ -72,8 +73,8 @@ export function Sidebar() {
           href="/dashboard"
           className={`flex items-center gap-3 p-3 rounded-lg mb-1 transition-colors ${
             pathname === "/dashboard"
-              ? "border-l-2 border-accent-400 bg-white/5 text-white"
-              : "text-stone-400 hover:bg-white/5 hover:text-stone-200"
+              ? "border-l-2 border-[var(--sidebar-accent)] bg-white/5 text-[var(--sidebar-text-active)] neon-active-glow"
+              : "text-[var(--sidebar-text)] hover:bg-white/5 hover:text-[var(--sidebar-text-hover)]"
           }`}
         >
           <Home size={20} />
@@ -85,7 +86,7 @@ export function Sidebar() {
         {/* New Quiz Button */}
         <Link
           href="/dashboard/quiz/new"
-          className="flex items-center gap-3 p-3 rounded-lg mb-4 border border-accent-400 text-accent-400 hover:bg-accent-400/10 transition-colors"
+          className="flex items-center gap-3 p-3 rounded-lg mb-4 border border-[var(--sidebar-accent)] text-[var(--sidebar-accent)] hover:bg-[var(--sidebar-accent)]/10 transition-colors"
         >
           <Plus size={20} />
           <span className={`transition-opacity duration-200 ${collapsedClass}`}>
@@ -102,7 +103,7 @@ export function Sidebar() {
           }`}
         >
           <div className="mb-4">
-            <h2 className="uppercase tracking-widest text-[10px] text-stone-500 font-semibold px-3 mb-2 flex items-center gap-2">
+            <h2 className="uppercase tracking-widest text-[10px] text-[var(--sidebar-text)] font-semibold px-3 mb-2 flex items-center gap-2">
               <BookOpen size={12} />
               Your Quizzes
             </h2>
@@ -111,7 +112,7 @@ export function Sidebar() {
                 <div className="inline-block w-5 h-5 border-2 border-primary-800 border-t-primary-400 rounded-full animate-spin" />
               </div>
             ) : quizzes.length === 0 ? (
-              <div className="text-center py-4 text-stone-600 text-sm">
+              <div className="text-center py-4 text-[var(--sidebar-text)] opacity-60 text-sm">
                 No quizzes yet
               </div>
             ) : (
@@ -122,11 +123,11 @@ export function Sidebar() {
                     href={`/dashboard/quiz/${quiz.id}`}
                     className={`flex items-center gap-2 p-2 rounded-lg text-sm transition-colors ${
                       pathname === `/dashboard/quiz/${quiz.id}`
-                        ? "border-l-2 border-accent-400 bg-white/5 text-white"
-                        : "text-stone-400 hover:bg-white/5 hover:text-stone-200"
+                        ? "border-l-2 border-[var(--sidebar-accent)] bg-white/5 text-[var(--sidebar-text-active)] neon-active-glow"
+                        : "text-[var(--sidebar-text)] hover:bg-white/5 hover:text-[var(--sidebar-text-hover)]"
                     }`}
                   >
-                    <span className="font-mono text-[11px] text-stone-500 shrink-0">
+                    <span className="font-mono text-[11px] text-[var(--sidebar-text)] opacity-70 shrink-0">
                       {difficultyLabels[quiz.difficulty].label}
                     </span>
                     <span className="truncate flex-1">{quiz.title}</span>
@@ -139,10 +140,11 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="p-2 border-t border-primary-900">
+      <div className="p-2 border-t border-[var(--sidebar-border)] space-y-1">
+        <SettingsPopover isCollapsed={isCollapsed} />
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-3 p-3 rounded-lg w-full text-stone-500 hover:text-stone-300 hover:bg-white/5 transition-colors"
+          className="flex items-center gap-3 p-3 rounded-lg w-full text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-hover)] hover:bg-white/5 transition-colors"
         >
           <LogOut size={20} />
           <span className={`transition-opacity duration-200 ${collapsedClass}`}>

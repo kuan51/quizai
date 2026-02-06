@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+/* Override dark: variant to use .dark class instead of media query */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ============================================================================
    QuizAI — Refined Editorial Design System
    ============================================================================ */
@@ -60,14 +63,15 @@
 }
 
 /* ============================================================================
-   Light / Dark Mode via system preference
+   EDITORIAL THEME (Default — :root, no data-theme attribute)
+   Warm cream paper with deep plum ink. Literary magazine.
    ============================================================================ */
 
 :root {
-  --background: #fafaf9;
+  --background: #faf8f6;
   --surface: #ffffff;
-  --surface-elevated: #f5f5f4;
-  --surface-inset: #efeceb;
+  --surface-elevated: #f5f3f0;
+  --surface-inset: #eeebe8;
   --text-primary: #1c1917;
   --text-secondary: #57534e;
   --text-tertiary: #a8a29e;
@@ -76,23 +80,929 @@
   --ring: #7b4f94;
   --noise-opacity: 0.03;
   --shadow-color: 30 10% 50%;
+  --backdrop-blur: 0px;
+
+  /* Glow system — off for non-neon */
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  /* Sidebar */
+  --sidebar-bg: #1a0b22;
+  --sidebar-border: #2a1435;
+  --sidebar-text: #a8a29e;
+  --sidebar-text-hover: #d6d3d1;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #d4a847;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0c0a09;
-    --surface: #1c1917;
-    --surface-elevated: #292524;
-    --surface-inset: #0c0a09;
-    --text-primary: #fafaf9;
-    --text-secondary: #a8a29e;
-    --text-tertiary: #78716c;
-    --border: #292524;
-    --border-subtle: #1c1917;
-    --ring: #9b72b0;
-    --noise-opacity: 0.02;
-    --shadow-color: 20 40% 2%;
-  }
+/* ============================================================================
+   EDITORIAL DARK
+   Rich warm charcoal, lamplight feel. Plum + gold glow.
+   ============================================================================ */
+
+[data-theme="editorial-dark"] {
+  --background: #100d0a;
+  --surface: #1c1814;
+  --surface-elevated: #2a2520;
+  --surface-inset: #0c0a08;
+  --text-primary: #faf8f5;
+  --text-secondary: #b0a99e;
+  --text-tertiary: #78716c;
+  --border: #302a24;
+  --border-subtle: #221e18;
+  --ring: #b08cc8;
+  --noise-opacity: 0.025;
+  --shadow-color: 25 40% 3%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #0a0806;
+  --sidebar-border: #1a1612;
+  --sidebar-text: #78716c;
+  --sidebar-text-hover: #b0a99e;
+  --sidebar-text-active: #faf8f5;
+  --sidebar-accent: #d4a847;
+
+  --color-primary-50: #faf5ff;
+  --color-primary-100: #f3e8ff;
+  --color-primary-200: #ddd0e8;
+  --color-primary-300: #bea3cc;
+  --color-primary-400: #9b72b0;
+  --color-primary-500: #7b4f94;
+  --color-primary-600: #633d78;
+  --color-primary-700: #4e2d61;
+  --color-primary-800: #3b1f4a;
+  --color-primary-900: #2a1435;
+  --color-primary-950: #1a0b22;
+
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #dab04a;
+  --color-accent-500: #c49a3e;
+  --color-accent-700: #7a6228;
+
+  --color-success-light: #162016;
+  --color-success: #5b8c6b;
+  --color-success-dark: #3d6049;
+  --color-warning-light: #201a10;
+  --color-warning: #c4893b;
+  --color-warning-dark: #8c6229;
+  --color-error-light: #201014;
+  --color-error: #a04050;
+  --color-error-dark: #732d39;
+}
+
+/* ============================================================================
+   EDITORIAL NEON
+   Deep plum-washed surfaces. Electric fuchsia + hot amber. Tokyo literary bar.
+   ============================================================================ */
+
+[data-theme="editorial-neon"] {
+  --background: #1e1420;
+  --surface: #2a1e2e;
+  --surface-elevated: #362838;
+  --surface-inset: #160e18;
+  --text-primary: #faf5ff;
+  --text-secondary: #d0c0d8;
+  --text-tertiary: #8a7890;
+  --border: rgba(236, 72, 153, 0.25);
+  --border-subtle: rgba(236, 72, 153, 0.12);
+  --ring: #ec4899;
+  --noise-opacity: 0.04;
+  --shadow-color: 310 50% 12%;
+  --backdrop-blur: 0px;
+
+  --glow-color: #ec4899;
+  --glow-color-rgb: 236, 72, 153;
+  --glow-strength: 1;
+  --glow-spread: 8px;
+  --text-glow: 0 0 10px rgba(236, 72, 153, 0.4);
+
+  --sidebar-bg: #140c16;
+  --sidebar-border: rgba(236, 72, 153, 0.2);
+  --sidebar-text: #8a7890;
+  --sidebar-text-hover: #d0c0d8;
+  --sidebar-text-active: #faf5ff;
+  --sidebar-accent: #fbbf24;
+
+  --color-primary-50: #fdf2f8;
+  --color-primary-100: #fce7f3;
+  --color-primary-200: #fbcfe8;
+  --color-primary-300: #f9a8d4;
+  --color-primary-400: #f472b6;
+  --color-primary-500: #ec4899;
+  --color-primary-600: #db2777;
+  --color-primary-700: #be185d;
+  --color-primary-800: #9d174d;
+  --color-primary-900: #831843;
+  --color-primary-950: #500724;
+
+  --color-accent-50: #fefce8;
+  --color-accent-100: #fef9c3;
+  --color-accent-200: #fef08a;
+  --color-accent-300: #fde047;
+  --color-accent-400: #facc15;
+  --color-accent-500: #eab308;
+  --color-accent-700: #a16207;
+
+  --color-success-light: #1a2818;
+  --color-success: #4ade80;
+  --color-success-dark: #22c55e;
+  --color-warning-light: #2a2210;
+  --color-warning: #fbbf24;
+  --color-warning-dark: #d97706;
+  --color-error-light: #2a1018;
+  --color-error: #fb7185;
+  --color-error-dark: #e11d48;
+}
+
+/* ============================================================================
+   CYBERPUNK LIGHT
+   Chrome & steel. Cool silver-blue metallic. Sharp cyan. Cold, corporate.
+   ============================================================================ */
+
+[data-theme="cyberpunk-light"] {
+  --background: #dce0ea;
+  --surface: #e8ecf4;
+  --surface-elevated: #d4d8e4;
+  --surface-inset: #cdd2de;
+  --text-primary: #0c0e18;
+  --text-secondary: #3a3e52;
+  --text-tertiary: #7880a0;
+  --border: #b8bcd0;
+  --border-subtle: #d0d4e2;
+  --ring: #0891b2;
+  --noise-opacity: 0.02;
+  --shadow-color: 225 20% 45%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #0c0e18;
+  --sidebar-border: #1a1e30;
+  --sidebar-text: #7880a0;
+  --sidebar-text-hover: #b8bcd0;
+  --sidebar-text-active: #e8ecf4;
+  --sidebar-accent: #0891b2;
+
+  --color-primary-50: #ecfeff;
+  --color-primary-100: #cffafe;
+  --color-primary-200: #a5f3fc;
+  --color-primary-300: #67e8f9;
+  --color-primary-400: #22d3ee;
+  --color-primary-500: #06b6d4;
+  --color-primary-600: #0891b2;
+  --color-primary-700: #0e7490;
+  --color-primary-800: #155e75;
+  --color-primary-900: #164e63;
+  --color-primary-950: #083344;
+
+  --color-accent-50: #fdf2f8;
+  --color-accent-100: #fce7f3;
+  --color-accent-200: #fbcfe8;
+  --color-accent-300: #f9a8d4;
+  --color-accent-400: #f472b6;
+  --color-accent-500: #ec4899;
+  --color-accent-700: #9d174d;
+
+  --color-success-light: #e0f7f0;
+  --color-success: #00c853;
+  --color-success-dark: #00953e;
+  --color-warning-light: #fff8e1;
+  --color-warning: #ffab00;
+  --color-warning-dark: #c67c00;
+  --color-error-light: #fce4ec;
+  --color-error: #ff1744;
+  --color-error-dark: #c4001d;
+}
+
+/* ============================================================================
+   CYBERPUNK DARK
+   Deep void black. Harsh cyan + hot pink. Aggressive contrast.
+   ============================================================================ */
+
+[data-theme="cyberpunk-dark"] {
+  --background: #07070d;
+  --surface: #0e0e1a;
+  --surface-elevated: #16162a;
+  --surface-inset: #040408;
+  --text-primary: #e8e6f0;
+  --text-secondary: #9090b0;
+  --text-tertiary: #5a5a78;
+  --border: #1e1e38;
+  --border-subtle: #141428;
+  --ring: #00ffff;
+  --noise-opacity: 0.03;
+  --shadow-color: 240 60% 5%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #030306;
+  --sidebar-border: #0e0e1a;
+  --sidebar-text: #5a5a78;
+  --sidebar-text-hover: #9090b0;
+  --sidebar-text-active: #e8e6f0;
+  --sidebar-accent: #00ffff;
+
+  --color-primary-50: #e0ffff;
+  --color-primary-100: #b3ffff;
+  --color-primary-200: #80ffff;
+  --color-primary-300: #4dffff;
+  --color-primary-400: #1affff;
+  --color-primary-500: #00ffff;
+  --color-primary-600: #00cccc;
+  --color-primary-700: #009999;
+  --color-primary-800: #006666;
+  --color-primary-900: #003333;
+  --color-primary-950: #001a1a;
+
+  --color-accent-50: #ffe0ea;
+  --color-accent-100: #ffb3c9;
+  --color-accent-200: #ff80a4;
+  --color-accent-300: #ff4d80;
+  --color-accent-400: #ff2d6f;
+  --color-accent-500: #e0195a;
+  --color-accent-700: #8a0038;
+
+  --color-success-light: #0a2018;
+  --color-success: #00e676;
+  --color-success-dark: #00b85c;
+  --color-warning-light: #201a00;
+  --color-warning: #ffab00;
+  --color-warning-dark: #cc8900;
+  --color-error-light: #200a10;
+  --color-error: #ff1744;
+  --color-error-dark: #d50032;
+}
+
+/* ============================================================================
+   CYBERPUNK NEON
+   Deep electric blue-washed surfaces. Magenta + acid green. Maximum grit.
+   ============================================================================ */
+
+[data-theme="cyberpunk-neon"] {
+  --background: #0d0d28;
+  --surface: #14143a;
+  --surface-elevated: #1c1c4a;
+  --surface-inset: #080820;
+  --text-primary: #ffffff;
+  --text-secondary: #c0c0e0;
+  --text-tertiary: #7070a0;
+  --border: rgba(255, 0, 255, 0.3);
+  --border-subtle: rgba(255, 0, 255, 0.15);
+  --ring: #ff00ff;
+  --noise-opacity: 0.05;
+  --shadow-color: 280 60% 10%;
+  --backdrop-blur: 0px;
+
+  --glow-color: #ff00ff;
+  --glow-color-rgb: 255, 0, 255;
+  --glow-strength: 2;
+  --glow-spread: 12px;
+  --text-glow: 0 0 12px rgba(255, 0, 255, 0.5), 0 0 24px rgba(255, 0, 255, 0.2);
+
+  --sidebar-bg: #08081e;
+  --sidebar-border: rgba(255, 0, 255, 0.25);
+  --sidebar-text: #7070a0;
+  --sidebar-text-hover: #c0c0e0;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #39ff14;
+
+  --color-primary-50: #ffe0ff;
+  --color-primary-100: #ffb3ff;
+  --color-primary-200: #ff80ff;
+  --color-primary-300: #ff4dff;
+  --color-primary-400: #ff1aff;
+  --color-primary-500: #ff00ff;
+  --color-primary-600: #cc00cc;
+  --color-primary-700: #990099;
+  --color-primary-800: #660066;
+  --color-primary-900: #330033;
+  --color-primary-950: #1a001a;
+
+  --color-accent-50: #e5ffe0;
+  --color-accent-100: #b8ff99;
+  --color-accent-200: #8cff66;
+  --color-accent-300: #60ff33;
+  --color-accent-400: #39ff14;
+  --color-accent-500: #2dcc10;
+  --color-accent-700: #1a7a0a;
+
+  --color-success-light: #0a200a;
+  --color-success: #39ff14;
+  --color-success-dark: #2dcc10;
+  --color-warning-light: #302800;
+  --color-warning: #ffe600;
+  --color-warning-dark: #ccb800;
+  --color-error-light: #300008;
+  --color-error: #ff003c;
+  --color-error-dark: #cc0030;
+}
+
+/* ============================================================================
+   DRACULA LIGHT
+   Warm parchment, classic Dracula purples and pinks. Faithful inversion.
+   ============================================================================ */
+
+[data-theme="dracula-light"] {
+  --background: #f8f8f2;
+  --surface: #ffffff;
+  --surface-elevated: #f0eff5;
+  --surface-inset: #eae8f0;
+  --text-primary: #282a36;
+  --text-secondary: #6272a4;
+  --text-tertiary: #9ba4c4;
+  --border: #d8d8e8;
+  --border-subtle: #eae8f0;
+  --ring: #bd93f9;
+  --noise-opacity: 0.02;
+  --shadow-color: 250 20% 50%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #282a36;
+  --sidebar-border: #343746;
+  --sidebar-text: #6272a4;
+  --sidebar-text-hover: #9ba4c4;
+  --sidebar-text-active: #f8f8f2;
+  --sidebar-accent: #ff79c6;
+
+  --color-primary-50: #f3eefe;
+  --color-primary-100: #e4d9fc;
+  --color-primary-200: #d4c2fa;
+  --color-primary-300: #cdb4f8;
+  --color-primary-400: #bd93f9;
+  --color-primary-500: #a872f0;
+  --color-primary-600: #8b5ccf;
+  --color-primary-700: #6d42a8;
+  --color-primary-800: #4f2d80;
+  --color-primary-900: #3a2060;
+  --color-primary-950: #2d1b4e;
+
+  --color-accent-50: #ffe8f1;
+  --color-accent-100: #ffc4db;
+  --color-accent-200: #ffa0c4;
+  --color-accent-300: #ff8cb8;
+  --color-accent-400: #ff79c6;
+  --color-accent-500: #e05eaa;
+  --color-accent-700: #4e1a38;
+
+  --color-success-light: #e6fbe9;
+  --color-success: #50fa7b;
+  --color-success-dark: #30c455;
+  --color-warning-light: #fff0e0;
+  --color-warning: #ffb86c;
+  --color-warning-dark: #d4923a;
+  --color-error-light: #ffe0e0;
+  --color-error: #ff5555;
+  --color-error-dark: #cc3333;
+}
+
+/* ============================================================================
+   DRACULA DARK
+   Classic Dracula. Deep purple-gray, bright purple primary, pink accent.
+   ============================================================================ */
+
+[data-theme="dracula-dark"] {
+  --background: #282a36;
+  --surface: #343746;
+  --surface-elevated: #44475a;
+  --surface-inset: #21222c;
+  --text-primary: #f8f8f2;
+  --text-secondary: #6272a4;
+  --text-tertiary: #4d5578;
+  --border: #44475a;
+  --border-subtle: #343746;
+  --ring: #bd93f9;
+  --noise-opacity: 0.02;
+  --shadow-color: 230 30% 8%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #1a1b26;
+  --sidebar-border: #282a36;
+  --sidebar-text: #4d5578;
+  --sidebar-text-hover: #6272a4;
+  --sidebar-text-active: #f8f8f2;
+  --sidebar-accent: #ff79c6;
+
+  --color-primary-50: #f3eefe;
+  --color-primary-100: #e4d9fc;
+  --color-primary-200: #d4c2fa;
+  --color-primary-300: #cdb4f8;
+  --color-primary-400: #bd93f9;
+  --color-primary-500: #a872f0;
+  --color-primary-600: #8b5ccf;
+  --color-primary-700: #6d42a8;
+  --color-primary-800: #4f2d80;
+  --color-primary-900: #3a2060;
+  --color-primary-950: #1a1026;
+
+  --color-accent-50: #ffe8f1;
+  --color-accent-100: #ffc4db;
+  --color-accent-200: #ffa0c4;
+  --color-accent-300: #ff8cb8;
+  --color-accent-400: #ff79c6;
+  --color-accent-500: #e05eaa;
+  --color-accent-700: #261020;
+
+  --color-success-light: #102818;
+  --color-success: #50fa7b;
+  --color-success-dark: #30c455;
+  --color-warning-light: #28200e;
+  --color-warning: #ffb86c;
+  --color-warning-dark: #d4923a;
+  --color-error-light: #2e1010;
+  --color-error: #ff5555;
+  --color-error-dark: #cc3333;
+}
+
+/* ============================================================================
+   DRACULA NEON
+   Deep purple-washed surfaces. Bright violet, hot neon pink. Dracula at 11.
+   ============================================================================ */
+
+[data-theme="dracula-neon"] {
+  --background: #1c1430;
+  --surface: #261e3e;
+  --surface-elevated: #30264a;
+  --surface-inset: #140e24;
+  --text-primary: #f8f8f2;
+  --text-secondary: #c8b8e0;
+  --text-tertiary: #8878a8;
+  --border: rgba(189, 147, 249, 0.3);
+  --border-subtle: rgba(189, 147, 249, 0.15);
+  --ring: #bd93f9;
+  --noise-opacity: 0.04;
+  --shadow-color: 270 50% 10%;
+  --backdrop-blur: 0px;
+
+  --glow-color: #bd93f9;
+  --glow-color-rgb: 189, 147, 249;
+  --glow-strength: 1;
+  --glow-spread: 8px;
+  --text-glow: 0 0 10px rgba(189, 147, 249, 0.4);
+
+  --sidebar-bg: #110c22;
+  --sidebar-border: rgba(189, 147, 249, 0.2);
+  --sidebar-text: #8878a8;
+  --sidebar-text-hover: #c8b8e0;
+  --sidebar-text-active: #f8f8f2;
+  --sidebar-accent: #ff79c6;
+
+  --color-primary-50: #f3eefe;
+  --color-primary-100: #e4d9fc;
+  --color-primary-200: #d4c2fa;
+  --color-primary-300: #cdb4f8;
+  --color-primary-400: #bd93f9;
+  --color-primary-500: #a872f0;
+  --color-primary-600: #8b5ccf;
+  --color-primary-700: #7c3aed;
+  --color-primary-800: #6d28d9;
+  --color-primary-900: #4c1d95;
+  --color-primary-950: #2e1065;
+
+  --color-accent-50: #fff0f6;
+  --color-accent-100: #ffd6e7;
+  --color-accent-200: #ffadd2;
+  --color-accent-300: #ff85b8;
+  --color-accent-400: #ff79c6;
+  --color-accent-500: #ff50a0;
+  --color-accent-700: #a3003e;
+
+  --color-success-light: #102818;
+  --color-success: #50fa7b;
+  --color-success-dark: #30c455;
+  --color-warning-light: #28200e;
+  --color-warning: #ffb86c;
+  --color-warning-dark: #d4923a;
+  --color-error-light: #2e1010;
+  --color-error: #ff5555;
+  --color-error-dark: #cc3333;
+}
+
+/* ============================================================================
+   ARC LIGHT
+   Clean Nordic cool gray. Arctic blue primary, soft teal accent. Calm.
+   ============================================================================ */
+
+[data-theme="arc-light"] {
+  --background: #f5f6f7;
+  --surface: #ffffff;
+  --surface-elevated: #eef0f2;
+  --surface-inset: #e6e8ec;
+  --text-primary: #2e3440;
+  --text-secondary: #5c616c;
+  --text-tertiary: #9ba0a8;
+  --border: #d3d8e2;
+  --border-subtle: #e8eaee;
+  --ring: #5294e2;
+  --noise-opacity: 0.015;
+  --shadow-color: 220 15% 50%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #2b303b;
+  --sidebar-border: #383c4a;
+  --sidebar-text: #7c818c;
+  --sidebar-text-hover: #d3dae3;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #5294e2;
+
+  --color-primary-50: #e8f0fc;
+  --color-primary-100: #c8ddf7;
+  --color-primary-200: #a0c4f0;
+  --color-primary-300: #78abe9;
+  --color-primary-400: #5294e2;
+  --color-primary-500: #3d7fd4;
+  --color-primary-600: #2d68b5;
+  --color-primary-700: #205096;
+  --color-primary-800: #173a72;
+  --color-primary-900: #102852;
+  --color-primary-950: #0d1f3c;
+
+  --color-accent-50: #e0f5f7;
+  --color-accent-100: #b3e8ed;
+  --color-accent-200: #80d8e2;
+  --color-accent-300: #5ec8d4;
+  --color-accent-400: #3daebd;
+  --color-accent-500: #2d96a5;
+  --color-accent-700: #0a2428;
+
+  --color-success-light: #e8f5e9;
+  --color-success: #4caf50;
+  --color-success-dark: #357a38;
+  --color-warning-light: #fff3e0;
+  --color-warning: #ff9800;
+  --color-warning-dark: #cc7a00;
+  --color-error-light: #fce4e4;
+  --color-error: #f44336;
+  --color-error-dark: #c62828;
+}
+
+/* ============================================================================
+   ARC DARK
+   Deep slate blue-gray. Bright blue. Nord-inspired, serious.
+   ============================================================================ */
+
+[data-theme="arc-dark"] {
+  --background: #2b303b;
+  --surface: #383c4a;
+  --surface-elevated: #444a5c;
+  --surface-inset: #242830;
+  --text-primary: #d3dae3;
+  --text-secondary: #7c818c;
+  --text-tertiary: #555a66;
+  --border: #4b5162;
+  --border-subtle: #3a3f4e;
+  --ring: #5294e2;
+  --noise-opacity: 0.02;
+  --shadow-color: 220 30% 8%;
+  --backdrop-blur: 0px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: #1e2028;
+  --sidebar-border: #2b303b;
+  --sidebar-text: #555a66;
+  --sidebar-text-hover: #7c818c;
+  --sidebar-text-active: #d3dae3;
+  --sidebar-accent: #5294e2;
+
+  --color-primary-50: #e8f0fc;
+  --color-primary-100: #c8ddf7;
+  --color-primary-200: #a0c4f0;
+  --color-primary-300: #78abe9;
+  --color-primary-400: #5294e2;
+  --color-primary-500: #3d7fd4;
+  --color-primary-600: #2d68b5;
+  --color-primary-700: #205096;
+  --color-primary-800: #173a72;
+  --color-primary-900: #102852;
+  --color-primary-950: #0d1520;
+
+  --color-accent-50: #e0f5f7;
+  --color-accent-100: #b3e8ed;
+  --color-accent-200: #80d8e2;
+  --color-accent-300: #5ec8d4;
+  --color-accent-400: #3daebd;
+  --color-accent-500: #2d96a5;
+  --color-accent-700: #0a1618;
+
+  --color-success-light: #1a2e1a;
+  --color-success: #81c784;
+  --color-success-dark: #5ca05e;
+  --color-warning-light: #2e2610;
+  --color-warning: #ffb74d;
+  --color-warning-dark: #cc8f2a;
+  --color-error-light: #2e1414;
+  --color-error: #e57373;
+  --color-error-dark: #c04848;
+}
+
+/* ============================================================================
+   ARC NEON
+   Deep arctic blue-washed surfaces. Electric sky blue, neon teal. Aurora borealis.
+   ============================================================================ */
+
+[data-theme="arc-neon"] {
+  --background: #0e1a2e;
+  --surface: #142238;
+  --surface-elevated: #1a2a44;
+  --surface-inset: #0a1422;
+  --text-primary: #e8eef5;
+  --text-secondary: #a0b4cc;
+  --text-tertiary: #607890;
+  --border: rgba(56, 189, 248, 0.25);
+  --border-subtle: rgba(56, 189, 248, 0.12);
+  --ring: #38bdf8;
+  --noise-opacity: 0.04;
+  --shadow-color: 210 50% 8%;
+  --backdrop-blur: 0px;
+
+  --glow-color: #38bdf8;
+  --glow-color-rgb: 56, 189, 248;
+  --glow-strength: 1;
+  --glow-spread: 8px;
+  --text-glow: 0 0 10px rgba(56, 189, 248, 0.4);
+
+  --sidebar-bg: #08101e;
+  --sidebar-border: rgba(56, 189, 248, 0.2);
+  --sidebar-text: #607890;
+  --sidebar-text-hover: #a0b4cc;
+  --sidebar-text-active: #e8eef5;
+  --sidebar-accent: #22d3ee;
+
+  --color-primary-50: #e0f2fe;
+  --color-primary-100: #bae6fd;
+  --color-primary-200: #7dd3fc;
+  --color-primary-300: #38bdf8;
+  --color-primary-400: #0ea5e9;
+  --color-primary-500: #0284c7;
+  --color-primary-600: #0369a1;
+  --color-primary-700: #075985;
+  --color-primary-800: #0c4a6e;
+  --color-primary-900: #083550;
+  --color-primary-950: #062030;
+
+  --color-accent-50: #e0fffe;
+  --color-accent-100: #b0faf0;
+  --color-accent-200: #5eead4;
+  --color-accent-300: #2dd4bf;
+  --color-accent-400: #22d3ee;
+  --color-accent-500: #14b8a6;
+  --color-accent-700: #0a2830;
+
+  --color-success-light: #0a2018;
+  --color-success: #4ade80;
+  --color-success-dark: #22c55e;
+  --color-warning-light: #201a0a;
+  --color-warning: #fbbf24;
+  --color-warning-dark: #d97706;
+  --color-error-light: #200a0a;
+  --color-error: #f87171;
+  --color-error-dark: #ef4444;
+}
+
+/* ============================================================================
+   GLASS LIGHT
+   Frosted translucent white. Blue primary, amber accent. Glassmorphism.
+   ============================================================================ */
+
+[data-theme="glass-light"] {
+  --background: #f0f0f5;
+  --surface: rgba(255, 255, 255, 0.7);
+  --surface-elevated: rgba(255, 255, 255, 0.5);
+  --surface-inset: rgba(230, 230, 240, 0.6);
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-tertiary: #9ca3af;
+  --border: rgba(209, 213, 219, 0.6);
+  --border-subtle: rgba(229, 231, 235, 0.5);
+  --ring: #3b82f6;
+  --noise-opacity: 0.015;
+  --shadow-color: 220 15% 60%;
+  --backdrop-blur: 12px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: rgba(15, 15, 25, 0.9);
+  --sidebar-border: rgba(75, 85, 99, 0.3);
+  --sidebar-text: #9ca3af;
+  --sidebar-text-hover: #d1d5db;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #3b82f6;
+
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #0c1929;
+
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #fbbf24;
+  --color-accent-500: #f59e0b;
+  --color-accent-700: #291a02;
+
+  --color-success-light: #ecfdf5;
+  --color-success: #22c55e;
+  --color-success-dark: #16a34a;
+  --color-warning-light: #fffbeb;
+  --color-warning: #f59e0b;
+  --color-warning-dark: #d97706;
+  --color-error-light: #fef2f2;
+  --color-error: #ef4444;
+  --color-error-dark: #dc2626;
+}
+
+/* ============================================================================
+   GLASS DARK
+   Translucent dark frost. Ethereal blue glow through smoked glass.
+   ============================================================================ */
+
+[data-theme="glass-dark"] {
+  --background: #0f1115;
+  --surface: rgba(31, 31, 35, 0.7);
+  --surface-elevated: rgba(45, 45, 52, 0.6);
+  --surface-inset: rgba(15, 15, 20, 0.8);
+  --text-primary: #e5e7eb;
+  --text-secondary: #9ca3af;
+  --text-tertiary: #6b7280;
+  --border: rgba(75, 85, 99, 0.4);
+  --border-subtle: rgba(55, 65, 81, 0.3);
+  --ring: #60a5fa;
+  --noise-opacity: 0.02;
+  --shadow-color: 220 30% 5%;
+  --backdrop-blur: 12px;
+
+  --glow-color: transparent;
+  --glow-color-rgb: 0, 0, 0;
+  --glow-strength: 0;
+  --glow-spread: 0px;
+  --text-glow: none;
+
+  --sidebar-bg: rgba(8, 8, 12, 0.9);
+  --sidebar-border: rgba(55, 65, 81, 0.3);
+  --sidebar-text: #6b7280;
+  --sidebar-text-hover: #9ca3af;
+  --sidebar-text-active: #e5e7eb;
+  --sidebar-accent: #60a5fa;
+
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #0a1320;
+
+  --color-accent-50: #fff7ed;
+  --color-accent-100: #ffedd5;
+  --color-accent-200: #fed7aa;
+  --color-accent-300: #fdba74;
+  --color-accent-400: #fb923c;
+  --color-accent-500: #f97316;
+  --color-accent-700: #1a0f06;
+
+  --color-success-light: #0a1f10;
+  --color-success: #4ade80;
+  --color-success-dark: #22c55e;
+  --color-warning-light: #1f1a0a;
+  --color-warning: #fbbf24;
+  --color-warning-dark: #d97706;
+  --color-error-light: #1f0a0a;
+  --color-error: #f87171;
+  --color-error-dark: #ef4444;
+}
+
+/* ============================================================================
+   GLASS NEON
+   Deep teal-washed translucent. Neon cyan + neon pink. Glow through glass.
+   ============================================================================ */
+
+[data-theme="glass-neon"] {
+  --background: #0a1a1e;
+  --surface: rgba(16, 40, 48, 0.7);
+  --surface-elevated: rgba(22, 50, 58, 0.6);
+  --surface-inset: rgba(8, 28, 34, 0.8);
+  --text-primary: #ffffff;
+  --text-secondary: #b0d8e0;
+  --text-tertiary: #6898a8;
+  --border: rgba(0, 255, 242, 0.25);
+  --border-subtle: rgba(0, 255, 242, 0.12);
+  --ring: #00fff2;
+  --noise-opacity: 0.04;
+  --shadow-color: 180 50% 8%;
+  --backdrop-blur: 16px;
+
+  --glow-color: #00fff2;
+  --glow-color-rgb: 0, 255, 242;
+  --glow-strength: 1;
+  --glow-spread: 10px;
+  --text-glow: 0 0 10px rgba(0, 255, 242, 0.4);
+
+  --sidebar-bg: rgba(5, 14, 18, 0.95);
+  --sidebar-border: rgba(0, 255, 242, 0.2);
+  --sidebar-text: #6898a8;
+  --sidebar-text-hover: #b0d8e0;
+  --sidebar-text-active: #ffffff;
+  --sidebar-accent: #ff00aa;
+
+  --color-primary-50: #e0fffd;
+  --color-primary-100: #b3fff9;
+  --color-primary-200: #80fff6;
+  --color-primary-300: #4dfff4;
+  --color-primary-400: #1afff3;
+  --color-primary-500: #00fff2;
+  --color-primary-600: #00ccc2;
+  --color-primary-700: #009991;
+  --color-primary-800: #006661;
+  --color-primary-900: #003330;
+  --color-primary-950: #001a18;
+
+  --color-accent-50: #ffe0f0;
+  --color-accent-100: #ffb3d8;
+  --color-accent-200: #ff80c0;
+  --color-accent-300: #ff4da8;
+  --color-accent-400: #ff1a90;
+  --color-accent-500: #ff00aa;
+  --color-accent-700: #1a0012;
+
+  --color-success-light: #0a1a0a;
+  --color-success: #00ff88;
+  --color-success-dark: #00cc6d;
+  --color-warning-light: #1a1400;
+  --color-warning: #ffe600;
+  --color-warning-dark: #ccb800;
+  --color-error-light: #1a0008;
+  --color-error: #ff0055;
+  --color-error-dark: #cc0044;
+}
+
+/* ============================================================================
+   Glass theme surface backdrop blur
+   Applied to elements using var(--surface) backgrounds
+   ============================================================================ */
+
+[data-theme^="glass"] .noise-overlay > *,
+[data-theme^="glass"] [class*="bg-[var(--surface"] {
+  -webkit-backdrop-filter: blur(var(--backdrop-blur));
+  backdrop-filter: blur(var(--backdrop-blur));
 }
 
 /* ============================================================================
@@ -159,6 +1069,84 @@ body {
     0 1px 3px hsl(var(--shadow-color) / 0.04),
     0 4px 8px hsl(var(--shadow-color) / 0.04),
     0 8px 16px hsl(var(--shadow-color) / 0.02);
+}
+
+/* ============================================================================
+   Neon Glow System — luminous effects for neon themes
+   ============================================================================ */
+
+/* Base glow — themed box-shadow */
+.neon-glow {
+  box-shadow:
+    0 0 var(--glow-spread, 0px) rgba(var(--glow-color-rgb, 0,0,0) / 0.3),
+    0 0 calc(var(--glow-spread, 0px) * 2) rgba(var(--glow-color-rgb, 0,0,0) / 0.15);
+}
+
+/* Intense glow — 3-layer */
+.neon-glow-intense {
+  box-shadow:
+    0 0 var(--glow-spread, 0px) rgba(var(--glow-color-rgb, 0,0,0) / 0.5),
+    0 0 calc(var(--glow-spread, 0px) * 2) rgba(var(--glow-color-rgb, 0,0,0) / 0.25),
+    0 0 calc(var(--glow-spread, 0px) * 4) rgba(var(--glow-color-rgb, 0,0,0) / 0.1);
+}
+
+/* Subtle border glow for cards/panels */
+.neon-border-glow {
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--glow-color-rgb, 0,0,0) / 0.15),
+    0 0 var(--glow-spread, 0px) rgba(var(--glow-color-rgb, 0,0,0) / 0.1);
+}
+
+/* Text glow for headings */
+.neon-text-glow {
+  text-shadow: var(--text-glow, none);
+}
+
+/* Active/focused state glow — for nav items, buttons */
+.neon-active-glow {
+  box-shadow:
+    0 0 4px rgba(var(--glow-color-rgb, 0,0,0) / 0.4),
+    0 0 8px rgba(var(--glow-color-rgb, 0,0,0) / 0.2),
+    inset 0 0 4px rgba(var(--glow-color-rgb, 0,0,0) / 0.1);
+}
+
+/* Pulsing glow animation */
+@keyframes neon-pulse {
+  0%, 100% {
+    box-shadow:
+      0 0 var(--glow-spread, 0px) rgba(var(--glow-color-rgb, 0,0,0) / 0.3),
+      0 0 calc(var(--glow-spread, 0px) * 2) rgba(var(--glow-color-rgb, 0,0,0) / 0.15);
+  }
+  50% {
+    box-shadow:
+      0 0 calc(var(--glow-spread, 0px) * 1.5) rgba(var(--glow-color-rgb, 0,0,0) / 0.4),
+      0 0 calc(var(--glow-spread, 0px) * 3) rgba(var(--glow-color-rgb, 0,0,0) / 0.2);
+  }
+}
+
+.neon-pulse {
+  animation: neon-pulse 3s ease-in-out infinite;
+}
+
+/* Auto-enhance shadows in neon themes with subtle glow */
+[data-theme$="-neon"] .shadow-editorial-sm {
+  box-shadow:
+    0 1px 2px hsl(var(--shadow-color) / 0.04),
+    0 2px 4px hsl(var(--shadow-color) / 0.04),
+    0 0 var(--glow-spread, 0px) rgba(var(--glow-color-rgb, 0,0,0) / 0.08);
+}
+
+[data-theme$="-neon"] .shadow-editorial {
+  box-shadow:
+    0 1px 3px hsl(var(--shadow-color) / 0.04),
+    0 4px 8px hsl(var(--shadow-color) / 0.04),
+    0 8px 16px hsl(var(--shadow-color) / 0.02),
+    0 0 var(--glow-spread, 0px) rgba(var(--glow-color-rgb, 0,0,0) / 0.1);
+}
+
+/* Neon themes: serif headings get subtle text glow */
+[data-theme$="-neon"] .font-serif {
+  text-shadow: var(--text-glow, none);
 }
 
 /* ============================================================================
@@ -259,3 +1247,141 @@ body {
 .stagger-6 {
   animation-delay: 0.3s;
 }
+
+/* ============================================================================
+   Landing page — keyframes & utilities
+   Immersive single-viewport landing page with gradient atmosphere
+   ============================================================================ */
+
+@keyframes landing-float {
+  0%, 100% { transform: translateY(0) rotate(1.5deg); }
+  50% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+@keyframes landing-orb-drift {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(30px, -20px); }
+  66% { transform: translate(-20px, 15px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes landing-orb-drift-reverse {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-25px, 20px); }
+  66% { transform: translate(20px, -15px); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes landing-glow-pulse {
+  0%, 100% { opacity: 0.3; scale: 1; }
+  50% { opacity: 0.5; scale: 1.05; }
+}
+
+@keyframes landing-text-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes landing-typewriter-line {
+  0% { opacity: 0; transform: translateX(-8px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes landing-option-select {
+  0% { box-shadow: 0 0 0 rgba(45, 212, 191, 0); }
+  60% { box-shadow: 0 0 20px rgba(45, 212, 191, 0.3); transform: scale(1.02); }
+  100% { box-shadow: 0 0 10px rgba(45, 212, 191, 0.15); transform: scale(1); }
+}
+
+@keyframes landing-checkmark {
+  0% { scale: 0; opacity: 0; }
+  50% { scale: 1.2; opacity: 1; }
+  100% { scale: 1; opacity: 1; }
+}
+
+@keyframes landing-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes landing-phase-enter {
+  0% { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes landing-phase-exit {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-12px); }
+}
+
+.landing-float {
+  animation: landing-float 6s ease-in-out infinite;
+}
+
+.landing-orb-1 {
+  animation: landing-orb-drift 20s ease-in-out infinite;
+}
+
+.landing-orb-2 {
+  animation: landing-orb-drift-reverse 25s ease-in-out infinite;
+}
+
+.landing-orb-3 {
+  animation: landing-orb-drift 18s ease-in-out infinite reverse;
+}
+
+.landing-glow-pulse {
+  animation: landing-glow-pulse 8s ease-in-out infinite;
+}
+
+.landing-glow-pulse-delayed {
+  animation: landing-glow-pulse 8s ease-in-out infinite;
+  animation-delay: 4s;
+}
+
+.landing-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    #c084fc 0%,
+    #2dd4bf 40%,
+    #fbbf24 60%,
+    #c084fc 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: landing-text-shimmer 2s linear infinite;
+}
+
+.landing-cursor {
+  animation: landing-cursor-blink 0.8s steps(1) infinite;
+}
+
+.landing-phase-in {
+  animation: landing-phase-enter 0.5s ease-out forwards;
+}
+
+.landing-phase-out {
+  animation: landing-phase-exit 0.4s ease-in forwards;
+}
+
+.landing-typewriter {
+  animation: landing-typewriter-line 0.4s ease-out forwards;
+  opacity: 0;
+}
+
+.landing-option-highlight {
+  animation: landing-option-select 0.6s ease-out forwards;
+}
+
+.landing-checkmark-in {
+  animation: landing-checkmark 0.4s ease-out forwards;
+}
+
+.landing-stagger-1 { animation-delay: 0.1s; }
+.landing-stagger-2 { animation-delay: 0.3s; }
+.landing-stagger-3 { animation-delay: 0.5s; }
+.landing-stagger-4 { animation-delay: 0.7s; }
+.landing-stagger-5 { animation-delay: 0.9s; }
+.landing-stagger-6 { animation-delay: 1.1s; }

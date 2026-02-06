@@ -46,10 +46,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Redirect to dashboard after sign in
+      // Allow any same-origin URL (covers sign-in callbackUrl="/dashboard" and sign-out callbackUrl="/")
       if (url.startsWith(baseUrl)) {
-        return `${baseUrl}/dashboard`;
+        return url;
       }
+      // Block cross-origin redirects
       return baseUrl;
     },
   },

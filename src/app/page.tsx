@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Button } from "@/components/ui/Button";
+import { Sparkles, Gauge, LayoutGrid } from "lucide-react";
+import { AIGenerationAnimation } from "@/components/landing/AIGenerationAnimation";
 
 export default async function LandingPage() {
   const session = await auth();
@@ -10,206 +11,161 @@ export default async function LandingPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--background)] noise-overlay">
-      {/* Header */}
-      <header className="sticky top-0 z-50 backdrop-blur-sm bg-[var(--background)]/80 border-b border-[var(--border-subtle)] animate-fade-down">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+    <div
+      className="h-screen overflow-hidden relative"
+      style={{
+        background:
+          "linear-gradient(135deg, #2d1b69 0%, #1a1145 25%, #0f2027 50%, #0d9488 75%, #d97706 100%)",
+      }}
+    >
+      {/* Background atmosphere */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {/* Pulsing radial glows */}
+        <div
+          className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full landing-glow-pulse"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%)",
+          }}
+        />
+        <div
+          className="absolute -bottom-[20%] -right-[10%] w-[50vw] h-[50vw] rounded-full landing-glow-pulse-delayed"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(13, 148, 136, 0.2) 0%, transparent 70%)",
+          }}
+        />
+
+        {/* Noise texture */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            opacity: 0.04,
+            backgroundImage:
+              "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E\")",
+            backgroundRepeat: "repeat",
+            backgroundSize: "256px 256px",
+          }}
+        />
+      </div>
+
+      {/* Content layer */}
+      <div className="relative z-10 h-screen flex flex-col">
+        {/* Header */}
+        <header className="flex items-center justify-between px-6 md:px-10 pt-5 pb-4">
           <Link
             href="/"
-            className="font-serif text-xl text-[var(--text-primary)]"
+            className="font-serif text-xl text-white/80 hover:text-white transition-colors duration-300 animate-fade-down landing-stagger-1"
           >
             QuizAI
           </Link>
-          <Link href="/login">
-            <Button variant="outline" size="sm">
-              Sign In
-            </Button>
+          <Link
+            href="/login"
+            className="text-sm text-white/60 border border-white/15 rounded-full px-4 py-1.5 backdrop-blur-sm hover:bg-white/10 hover:text-white/80 transition-all duration-300 animate-fade-down landing-stagger-1"
+          >
+            Sign In
           </Link>
-        </div>
-      </header>
+        </header>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 py-24 md:py-32">
-        <div className="grid md:grid-cols-5 gap-12 items-center">
-          {/* Left Column */}
-          <div className="md:col-span-3">
-            <h1 className="font-serif text-6xl md:text-7xl lg:text-8xl leading-[0.95] tracking-tight text-[var(--text-primary)] animate-fade-up stagger-1">
-              Study with
-              <br />
-              <span className="bg-accent-200/50 dark:bg-accent-700/30 px-2 -mx-1">
-                precision.
-              </span>
-            </h1>
-            <p className="text-lg md:text-xl text-[var(--text-secondary)] max-w-xl mt-6 animate-fade-up stagger-2">
-              Transform your notes into AI-powered quizzes. Master any subject
-              with adaptive difficulty.
-            </p>
-            <div className="flex gap-4 mt-8 animate-fade-up stagger-3">
-              <Link href="/login">
-                <Button variant="accent" size="lg">
+        {/* Main content */}
+        <main className="flex-1 flex items-center px-6 md:px-10">
+          <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center gap-8 lg:gap-16">
+            {/* Left column — Hero */}
+            <div className="md:w-[45%] text-center md:text-left">
+              <h1
+                className="font-serif leading-[1.05] tracking-tight text-white animate-fade-up landing-stagger-2"
+                style={{ fontSize: "clamp(2.75rem, 6vw, 5.5rem)" }}
+              >
+                Transform your
+                <br />
+                notes into
+                <br />
+                <span className="relative inline-block">
+                  <span
+                    aria-hidden="true"
+                    className="absolute inset-0 blur-2xl opacity-40 select-none"
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #c084fc, #fbbf24)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    brilliance.
+                  </span>
+                  <span
+                    style={{
+                      background:
+                        "linear-gradient(90deg, #c084fc, #2dd4bf, #fbbf24)",
+                      WebkitBackgroundClip: "text",
+                      WebkitTextFillColor: "transparent",
+                    }}
+                  >
+                    brilliance.
+                  </span>
+                </span>
+              </h1>
+
+              <p className="text-base md:text-lg text-white/55 max-w-md mt-5 md:mt-6 mx-auto md:mx-0 animate-fade-up landing-stagger-3">
+                AI-powered quizzes that adapt to how you learn.
+              </p>
+
+              <div className="flex flex-col items-center md:items-start gap-3 mt-7 md:mt-8">
+                <Link
+                  href="/login"
+                  className="inline-flex items-center justify-center rounded-xl px-8 py-3.5 font-semibold text-white transition-all duration-300 hover:scale-[1.03] animate-fade-up landing-stagger-4"
+                  style={{
+                    background: "linear-gradient(135deg, #7b4f94, #0d9488)",
+                    boxShadow:
+                      "0 0 20px rgba(123, 79, 148, 0.3), 0 0 60px rgba(13, 148, 136, 0.15)",
+                  }}
+                >
                   Get Started
-                </Button>
-              </Link>
-              <Link href="#features">
-                <Button variant="ghost" size="lg">
-                  Learn More
-                </Button>
-              </Link>
-            </div>
-          </div>
-
-          {/* Right Column — Decorative */}
-          <div className="md:col-span-2 hidden md:flex items-center justify-center">
-            <div className="relative w-full aspect-square max-w-sm animate-fade-in stagger-5">
-              <div className="absolute top-[10%] left-[5%] w-3/4 h-3/4 rounded-2xl bg-primary-200/20 dark:bg-primary-500/10 rotate-6" />
-              <div className="absolute top-[20%] left-[15%] w-2/3 h-2/3 rounded-2xl bg-accent-200/20 dark:bg-accent-500/10 -rotate-3" />
-              <div className="absolute top-[15%] left-[20%] w-1/2 h-1/2 rounded-2xl bg-stone-200/30 dark:bg-stone-500/10 rotate-12" />
-              <div className="absolute bottom-[10%] right-[10%] w-2/5 h-2/5 rounded-2xl bg-primary-300/15 dark:bg-primary-400/10 -rotate-6" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section
-        id="features"
-        className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-t border-[var(--border-subtle)]"
-      >
-        {(() => {
-          const features = [
-            {
-              num: "01",
-              label: "AI Generation",
-              title: "AI-Powered Generation",
-              description:
-                "Advanced AI analyzes your study material and creates relevant, challenging questions that test deep understanding.",
-              stagger: "stagger-1",
-              colSpan: "md:col-span-2",
-            },
-            {
-              num: "02",
-              label: "Adaptive Learning",
-              title: "Adaptive Difficulty",
-              description:
-                "Three distinct modes from gentle introduction to expert-level challenge, adapting to your knowledge level.",
-              stagger: "stagger-2",
-            },
-            {
-              num: "03",
-              label: "Question Formats",
-              title: "Multiple Formats",
-              description:
-                "Diverse question types including multiple choice, true/false, short answer, essay, and select-all-that-apply.",
-              stagger: "stagger-3",
-              colSpan: "md:col-span-3",
-            },
-          ];
-
-          return (
-            <div className="grid md:grid-cols-3 gap-6">
-              {features.map((feature) => (
-                <div
-                  key={feature.num}
-                  className={`${feature.colSpan ?? ""} bg-[var(--surface)] border border-[var(--border)] border-l-2 border-l-primary-500 rounded-lg p-8 animate-fade-up ${feature.stagger}`}
+                </Link>
+                <Link
+                  href="/login"
+                  className="text-sm text-white/35 hover:text-white/55 underline underline-offset-4 decoration-white/20 transition-colors duration-300 animate-fade-up landing-stagger-5"
                 >
-                  <p className="font-mono text-xs text-primary-500 uppercase tracking-widest mb-3">
-                    {feature.num} — {feature.label}
-                  </p>
-                  <h3 className="font-serif text-xl text-[var(--text-primary)] mb-2">
-                    {feature.title}
-                  </h3>
-                  <p className="text-[var(--text-secondary)] text-sm leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-              ))}
+                  Already have an account? Sign in
+                </Link>
+              </div>
             </div>
-          );
-        })()}
-      </section>
 
-      {/* Difficulty Modes Section */}
-      <section className="max-w-7xl mx-auto px-6 py-24 md:py-32 border-t border-[var(--border-subtle)]">
-        <h2 className="font-serif text-4xl md:text-5xl text-center text-[var(--text-primary)] mb-16">
-          Choose Your Challenge
-        </h2>
-        {(() => {
-          const difficultyModes = [
-            {
-              numeral: "I",
-              name: "Mercy Mode",
-              description:
-                "A gentle introduction for building confidence. Straightforward questions with helpful context to ease you into the material.",
-              borderColor: "border-t-mercy",
-            },
-            {
-              numeral: "II",
-              name: "Warfare Mode",
-              description:
-                "Balanced rigor for serious learners. Multi-layered questions that demand genuine comprehension and analytical thinking.",
-              borderColor: "border-t-warfare",
-            },
-            {
-              numeral: "III",
-              name: "Abandon Mode",
-              description:
-                "Uncompromising difficulty for those who accept nothing less than mastery. Expect nuance, edge cases, and expert-level depth.",
-              borderColor: "border-t-abandon",
-              isLast: true,
-            },
-          ];
+            {/* Right column — Animation */}
+            <div className="hidden md:block md:w-[55%] relative">
+              {/* Bokeh orbs */}
+              <div className="absolute -top-16 -left-10 w-48 h-48 rounded-full bg-purple-500/20 blur-3xl landing-orb-1" />
+              <div className="absolute -bottom-12 -right-8 w-40 h-40 rounded-full bg-teal-400/15 blur-3xl landing-orb-2" />
+              <div className="absolute top-1/2 -right-16 w-36 h-36 rounded-full bg-amber-500/15 blur-3xl landing-orb-3" />
 
-          return (
-            <div className="grid md:grid-cols-3">
-              {difficultyModes.map((mode) => (
-                <div
-                  key={mode.numeral}
-                  className={`p-8 ${mode.isLast ? "" : "border-b md:border-b-0 md:border-r border-[var(--border)]"} border-t-2 ${mode.borderColor}`}
-                >
-                  <p className="font-serif text-3xl text-[var(--text-tertiary)]">
-                    {mode.numeral}
-                  </p>
-                  <h3 className="font-serif text-xl text-[var(--text-primary)] mt-4">
-                    {mode.name}
-                  </h3>
-                  <p className="text-sm text-[var(--text-secondary)] mt-2 leading-relaxed">
-                    {mode.description}
-                  </p>
-                </div>
-              ))}
+              {/* Glassmorphic animation panel */}
+              <div className="relative z-10 bg-white/[0.07] border border-white/[0.12] rounded-2xl backdrop-blur-md p-6 lg:p-8 landing-float animate-fade-in landing-stagger-3">
+                <AIGenerationAnimation />
+              </div>
             </div>
-          );
-        })()}
-      </section>
-
-      {/* CTA Section */}
-      <section className="bg-primary-950 py-24 md:py-32">
-        <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl text-white">
-            Ready to study smarter?
-          </h2>
-          <p className="text-white/60 mt-4 text-lg">
-            Join students using AI to master their subjects.
-          </p>
-          <div className="mt-8">
-            <Link href="/login">
-              <Button variant="accent" size="lg">
-                Start Now
-              </Button>
-            </Link>
           </div>
-        </div>
-      </section>
+        </main>
 
-      {/* Footer */}
-      <footer className="max-w-7xl mx-auto px-6 py-12 border-t border-[var(--border-subtle)] flex justify-between items-center">
-        <span className="font-serif text-lg text-[var(--text-secondary)]">
-          QuizAI
-        </span>
-        <span className="text-xs text-[var(--text-tertiary)]">
-          &copy; {new Date().getFullYear()} QuizAI. All rights reserved.
-        </span>
-      </footer>
+        {/* Bottom feature pills */}
+        <div className="flex flex-wrap justify-center gap-3 md:gap-4 px-6 pb-6 md:pb-8">
+          {[
+            { icon: Sparkles, label: "AI-Powered" },
+            { icon: Gauge, label: "Adaptive Difficulty" },
+            { icon: LayoutGrid, label: "5+ Question Types" },
+          ].map((pill, i) => (
+            <div
+              key={pill.label}
+              className={`flex items-center gap-2 bg-white/[0.07] border border-white/[0.10] rounded-full px-4 py-2 backdrop-blur-sm hover:bg-white/[0.12] transition-all duration-300 animate-fade-up`}
+              style={{ animationDelay: `${0.9 + i * 0.1}s` }}
+            >
+              <pill.icon size={14} className="text-white/50" />
+              <span className="text-[13px] text-white/55 font-medium">
+                {pill.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

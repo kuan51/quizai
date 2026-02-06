@@ -17,7 +17,7 @@ const authRateLimitStore = new Map<
   { count: number; resetTime: number }
 >();
 const AUTH_WINDOW_MS = 300000; // 5 minutes
-const AUTH_MAX_REQUESTS = 10; // 10 requests per window
+const AUTH_MAX_REQUESTS = 30; // 30 requests per window
 let lastAuthCleanup = Date.now();
 
 function checkAuthRateLimit(ip: string): boolean {
