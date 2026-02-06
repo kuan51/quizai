@@ -46,7 +46,7 @@ const ESCAPE_SEQUENCES = [
   /[\u2066-\u2069]/g, // Bidirectional isolate characters
 ];
 
-export interface SanitizationResult {
+interface SanitizationResult {
   text: string;
   wasModified: boolean;
   patternsDetected: string[];
@@ -93,6 +93,19 @@ export function sanitizeForPrompt(
     }
     // Reset lastIndex for global patterns
     pattern.lastIndex = 0;
+  }
+
+  // 3b. Actively neutralize dangerous injection patterns
+  const injectionPatternsFound = patternsDetected.filter(
+    (p) => !["length_exceeded", "escape_sequence", "excessive_newlines"].includes(p)
+  );
+
+  if (injectionPatternsFound.length > 0) {
+    // Strip system/instruction marker patterns that attempt to break prompt boundaries
+    text = text.replace(/\[(system|instruction|admin)\]/gi, "[blocked]");
+    text = text.replace(/<(system|instruction)>/gi, "[blocked]");
+    text = text.replace(/```system/gi, "```blocked");
+    wasModified = true;
   }
 
   // 4. Normalize whitespace (remove excessive newlines that might break formatting)

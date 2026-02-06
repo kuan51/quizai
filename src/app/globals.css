@@ -1,136 +1,261 @@
 @import "tailwindcss";
 
-/* QuizAI Brand Color Configuration for Tailwind v4 */
+/* ============================================================================
+   QuizAI — Refined Editorial Design System
+   ============================================================================ */
+
 @theme inline {
-  /* Primary Purple Brand Colors */
-  --color-primary-50: #FAF5FF;
-  --color-primary-100: #F3E8FF;
-  --color-primary-200: #E9D5FF;
-  --color-primary-300: #D8B4FE;
-  --color-primary-400: #C084FC;
-  --color-primary-500: #A855F7;
-  --color-primary-600: #9333EA;
-  --color-primary-700: #7C3AED;
-  --color-primary-800: #6B21A8;
-  --color-primary-900: #581C87;
-  --color-primary-950: #3B0764;
+  /* Primary — Deep Plum/Aubergine spectrum */
+  --color-primary-50: #faf5ff;
+  --color-primary-100: #f3e8ff;
+  --color-primary-200: #ddd0e8;
+  --color-primary-300: #bea3cc;
+  --color-primary-400: #9b72b0;
+  --color-primary-500: #7b4f94;
+  --color-primary-600: #633d78;
+  --color-primary-700: #4e2d61;
+  --color-primary-800: #3b1f4a;
+  --color-primary-900: #2a1435;
+  --color-primary-950: #1a0b22;
 
-  /* Difficulty Mode Colors */
-  --color-mercy-light: #DCFCE7;
-  --color-mercy: #22C55E;
-  --color-mercy-dark: #15803D;
+  /* Accent — Muted Gold */
+  --color-accent-50: #fffbeb;
+  --color-accent-100: #fef3c7;
+  --color-accent-200: #fde68a;
+  --color-accent-300: #fcd34d;
+  --color-accent-400: #d4a847;
+  --color-accent-500: #b8923a;
+  --color-accent-700: #6b5523;
 
-  --color-warfare-light: #FEF3C7;
-  --color-warfare: #F59E0B;
-  --color-warfare-dark: #B45309;
+  /* Semantic Colors — Muted, sophisticated */
+  --color-success-light: #e8f0eb;
+  --color-success: #5b8c6b;
+  --color-success-dark: #3d6049;
 
-  --color-abandon-light: #FEE2E2;
-  --color-abandon: #EF4444;
-  --color-abandon-dark: #B91C1C;
+  --color-warning-light: #f5ede0;
+  --color-warning: #c4893b;
+  --color-warning-dark: #8c6229;
 
-  /* Semantic Colors */
-  --color-success-light: #DCFCE7;
-  --color-success: #22C55E;
-  --color-success-dark: #15803D;
+  --color-error-light: #f0e0e3;
+  --color-error: #a04050;
+  --color-error-dark: #732d39;
 
-  --color-error-light: #FEE2E2;
-  --color-error: #EF4444;
-  --color-error-dark: #B91C1C;
+  /* Difficulty Modes (aliased to semantic colors) */
+  --color-mercy-light: var(--color-success-light);
+  --color-mercy: var(--color-success);
+  --color-mercy-dark: var(--color-success-dark);
 
-  --color-warning-light: #FEF3C7;
-  --color-warning: #F59E0B;
-  --color-warning-dark: #B45309;
+  --color-warfare-light: var(--color-warning-light);
+  --color-warfare: var(--color-warning);
+  --color-warfare-dark: var(--color-warning-dark);
 
-  --color-info-light: #E0E7FF;
-  --color-info: #6366F1;
-  --color-info-dark: #4338CA;
+  --color-abandon-light: var(--color-error-light);
+  --color-abandon: var(--color-error);
+  --color-abandon-dark: var(--color-error-dark);
 
   /* Font Configuration */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-plus-jakarta);
+  --font-serif: var(--font-instrument);
+  --font-mono: var(--font-jetbrains);
 }
+
+/* ============================================================================
+   Light / Dark Mode via system preference
+   ============================================================================ */
 
 :root {
-  /* Light Mode */
-  --background: #F8FAFC;
-  --surface: #FFFFFF;
-  --surface-elevated: #F1F5F9;
-  --text-primary: #1E293B;
-  --text-secondary: #64748B;
-  --border: #E2E8F0;
+  --background: #fafaf9;
+  --surface: #ffffff;
+  --surface-elevated: #f5f5f4;
+  --surface-inset: #efeceb;
+  --text-primary: #1c1917;
+  --text-secondary: #57534e;
+  --text-tertiary: #a8a29e;
+  --border: #e7e5e4;
+  --border-subtle: #f5f5f4;
+  --ring: #7b4f94;
+  --noise-opacity: 0.03;
+  --shadow-color: 30 10% 50%;
 }
 
-.dark {
-  /* Dark Mode */
-  --background: #0F172A;
-  --surface: #1E293B;
-  --surface-elevated: #334155;
-  --text-primary: #F1F5F9;
-  --text-secondary: #94A3B8;
-  --border: #334155;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0c0a09;
+    --surface: #1c1917;
+    --surface-elevated: #292524;
+    --surface-inset: #0c0a09;
+    --text-primary: #fafaf9;
+    --text-secondary: #a8a29e;
+    --text-tertiary: #78716c;
+    --border: #292524;
+    --border-subtle: #1c1917;
+    --ring: #9b72b0;
+    --noise-opacity: 0.02;
+    --shadow-color: 20 40% 2%;
+  }
 }
+
+/* ============================================================================
+   Base styles
+   ============================================================================ */
 
 body {
   background: var(--background);
   color: var(--text-primary);
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
 }
 
-/* Custom Scrollbar */
+/* ============================================================================
+   Scrollbar
+   ============================================================================ */
+
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--surface);
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
+  background: var(--text-tertiary);
 }
 
-/* Gradient Backgrounds */
-.bg-gradient-primary {
-  background: linear-gradient(135deg, #9333EA 0%, #7C3AED 50%, #6366F1 100%);
+/* ============================================================================
+   Noise overlay — atmospheric texture
+   Applied via ::before pseudo-element on containers with class 'noise-overlay'
+   ============================================================================ */
+
+.noise-overlay::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
 }
 
-.bg-gradient-soft {
-  background: linear-gradient(180deg, #FAF5FF 0%, #F3E8FF 100%);
+/* ============================================================================
+   Editorial shadow system — multi-layered, sophisticated depth
+   ============================================================================ */
+
+.shadow-editorial-sm {
+  box-shadow:
+    0 1px 2px hsl(var(--shadow-color) / 0.04),
+    0 2px 4px hsl(var(--shadow-color) / 0.04);
 }
 
-.bg-gradient-dark {
-  background: linear-gradient(180deg, #1E1B4B 0%, #0F172A 100%);
+.shadow-editorial {
+  box-shadow:
+    0 1px 3px hsl(var(--shadow-color) / 0.04),
+    0 4px 8px hsl(var(--shadow-color) / 0.04),
+    0 8px 16px hsl(var(--shadow-color) / 0.02);
 }
 
-/* Glow Effects */
-.shadow-glow-purple {
-  box-shadow: 0 0 20px rgba(147, 51, 234, 0.3);
-}
+/* ============================================================================
+   Animation keyframes
+   ============================================================================ */
 
-.shadow-glow-success {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
-}
-
-.shadow-glow-error {
-  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-}
-
-/* Animation for loading states */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 10px rgba(147, 51, 234, 0.3);
+@keyframes fade-in {
+  from {
+    opacity: 0;
   }
-  50% {
-    box-shadow: 0 0 25px rgba(147, 51, 234, 0.5);
+  to {
+    opacity: 1;
   }
 }
 
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-down {
+  from {
+    opacity: 0;
+    transform: translateY(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+/* ============================================================================
+   Animation utilities
+   ============================================================================ */
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out both;
+}
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out both;
+}
+.animate-fade-down {
+  animation: fade-down 0.5s ease-out both;
+}
+.animate-scale-in {
+  animation: scale-in 0.4s ease-out both;
+}
+.animate-shimmer {
+  animation: shimmer 2s ease-in-out infinite;
+  background-size: 200% 100%;
+}
+
+/* ============================================================================
+   Stagger delay utilities — for orchestrated entrance sequences
+   ============================================================================ */
+
+.stagger-1 {
+  animation-delay: 0.05s;
+}
+.stagger-2 {
+  animation-delay: 0.1s;
+}
+.stagger-3 {
+  animation-delay: 0.15s;
+}
+.stagger-4 {
+  animation-delay: 0.2s;
+}
+.stagger-5 {
+  animation-delay: 0.25s;
+}
+.stagger-6 {
+  animation-delay: 0.3s;
 }

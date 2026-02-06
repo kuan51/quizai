@@ -17,7 +17,7 @@ let _initialized = false;
 function ensureDataDir() {
   const dbDir = path.dirname(dbPath);
   if (!fs.existsSync(dbDir)) {
-    fs.mkdirSync(dbDir, { recursive: true });
+    fs.mkdirSync(dbDir, { recursive: true, mode: 0o700 });
   }
 }
 
@@ -103,7 +103,7 @@ function initializeTables(sqlite: Database.Database) {
     CREATE TABLE IF NOT EXISTS responses (
       id TEXT PRIMARY KEY,
       attempt_id TEXT NOT NULL REFERENCES attempts(id) ON DELETE CASCADE,
-      question_id TEXT NOT NULL REFERENCES questions(id),
+      question_id TEXT NOT NULL REFERENCES questions(id) ON DELETE CASCADE,
       user_answer TEXT,
       is_correct INTEGER,
       ai_grading_feedback TEXT,
@@ -122,6 +122,15 @@ function initializeTables(sqlite: Database.Database) {
 
 function createConnection() {
   if (!_db) {
+    // Validate database path to prevent path traversal (only at runtime, not during build)
+    if (process.env.NODE_ENV === "production" && !process.env.NEXT_PHASE) {
+      const resolvedPath = path.resolve(dbPath);
+      const projectRoot = path.resolve(__dirname, "../../../");
+      if (!resolvedPath.startsWith(projectRoot)) {
+        throw new Error("DATABASE_URL must point to a location within the project directory");
+      }
+    }
+
     ensureDataDir();
     _sqlite = new Database(dbPath);
     _sqlite.pragma("busy_timeout = 10000");
@@ -136,7 +145,5 @@ function createConnection() {
 export function db() {
   return createConnection();
 }
-
-export const getDb = createConnection;
 
 export { schema };

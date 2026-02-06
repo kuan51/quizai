@@ -23,7 +23,7 @@ npm install
 Copy the example environment file:
 
 ```bash
-cp ../build/.env.example .env.local
+cp .env.example .env.local
 ```
 
 Edit `.env.local` with your configuration.

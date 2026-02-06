@@ -17,9 +17,11 @@ export default async function DashboardLayout({
 
   return (
     <SessionProvider session={session}>
-      <div className="flex h-screen overflow-hidden">
+      <div className="flex h-screen overflow-hidden noise-overlay">
         <Sidebar />
-        <div className="flex-1 overflow-auto">{children}</div>
+        <div className="flex-1 overflow-auto bg-[var(--background)]">
+          {children}
+        </div>
       </div>
     </SessionProvider>
   );

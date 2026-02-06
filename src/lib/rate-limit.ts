@@ -41,7 +41,7 @@ let lastCleanupTime = Date.now();
 const CLEANUP_INTERVAL_MS = 60000; // 1 minute
 
 // Default rate limit configurations per endpoint type
-export const rateLimitConfigs = {
+const rateLimitConfigs = {
   // Strict limit for AI generation (expensive operations)
   aiGeneration: { windowMs: 60000, maxRequests: 5 }, // 5 per minute
   // Moderate limit for AI grading
@@ -81,7 +81,7 @@ export interface RateLimitResult {
   retryAfter?: number;
 }
 
-export type IdentifierType = "userId" | "ip" | "anonymous";
+type IdentifierType = "userId" | "ip" | "anonymous";
 
 /**
  * Check if a request should be rate limited

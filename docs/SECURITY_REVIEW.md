@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-This security review evaluates the QuizAI application against OWASP Top 10:2021 standards. The application demonstrates several good security practices including proper authentication flow, parameterized queries via ORM, and non-root Docker execution. However, several areas require attention to align with OWASP best practices.
+This security review evaluates the QuizAI application against OWASP Top 10:2021 standards. The application demonstrates several good security practices including proper authentication flow and parameterized queries via ORM. However, several areas require attention to align with OWASP best practices.
 
 | Category | Risk Level | Status |
 |----------|------------|--------|
@@ -238,7 +238,6 @@ const offset = (page - 1) * limit;
 ## A05:2021 - Security Misconfiguration
 
 ### Current State
-- **GOOD:** Docker runs as non-root user
 - **GOOD:** Standalone output mode
 - **CONCERN:** Missing security headers
 
@@ -354,7 +353,6 @@ All three providers (Google, GitHub, Discord) are configured. Ensure:
 ## A08:2021 - Software and Data Integrity Failures
 
 ### Current State
-- **GOOD:** `npm ci` used in Dockerfile for reproducible builds
 - **CONCERN:** No integrity verification for AI responses
 
 ### Issues Found

@@ -19,7 +19,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         {label && (
           <label
             htmlFor={textareaId}
-            className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-1.5"
           >
             {label}
           </label>
@@ -28,14 +28,14 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           ref={ref}
           id={textareaId}
           className={cn(
-            "w-full px-4 py-3 rounded-lg border bg-white dark:bg-slate-800",
-            "text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500",
+            "w-full px-4 py-3 rounded-md border bg-[var(--surface)] dark:bg-stone-900",
+            "text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500",
             "transition-all duration-200 resize-y min-h-[120px]",
-            "focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500",
+            "focus:outline-none focus:ring-1 focus:ring-primary-400 focus:border-primary-400",
             error
-              ? "border-error focus:ring-error focus:border-error"
-              : "border-slate-300 dark:border-slate-600",
-            "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-100 dark:disabled:bg-slate-900",
+              ? "border-error bg-error-light/30 focus:ring-error focus:border-error"
+              : "border-stone-300 dark:border-stone-700",
+            "disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-stone-100 dark:disabled:bg-stone-900",
             className
           )}
           {...props}
@@ -44,7 +44,7 @@ const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           <p className="mt-1.5 text-sm text-error">{error}</p>
         )}
         {helperText && !error && (
-          <p className="mt-1.5 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1.5 text-sm text-stone-500 dark:text-stone-400">
             {helperText}
           </p>
         )}

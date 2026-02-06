@@ -1,10 +1,12 @@
 import pino from "pino";
 
-// Security event types for structured logging
+// Active: api.rate_limited, input.sanitized, ai.request, ai.response, ai.error
+// Planned: auth.signin, auth.signout, auth.failed, auth.link_account, api.access, api.error, input.validation_failed, quiz.created, quiz.deleted
 export type SecurityEventType =
   | "auth.signin"
   | "auth.signout"
   | "auth.failed"
+  | "auth.link_account"
   | "api.access"
   | "api.error"
   | "api.rate_limited"
@@ -112,8 +114,8 @@ export function getRequestContext(request: Request) {
     method: request.method,
     userAgent: request.headers.get("user-agent") || undefined,
     ip:
-      request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
       request.headers.get("x-real-ip") ||
+      request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
       "unknown",
   };
 }

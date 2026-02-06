@@ -18,7 +18,7 @@ Turn your study materials into AI-powered quizzes to help you ace your exams.
 cd src && npm install
 
 # Configure environment
-cp ../build/.env.example .env.local
+cp .env.example .env.local
 # Edit .env.local with your OAuth and AI credentials
 
 # Start development server
@@ -26,15 +26,6 @@ npm run dev
 ```
 
 Open http://localhost:3000
-
-## Docker Deployment
-
-```bash
-cd build
-cp .env.example .env
-# Edit .env with your configuration
-docker-compose up -d
-```
 
 ## Documentation
 

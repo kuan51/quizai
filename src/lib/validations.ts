@@ -95,7 +95,7 @@ export type GradeRequest = z.infer<typeof GradeRequestSchema>;
 /**
  * Helper to format Zod errors for API responses
  */
-export function formatZodErrors(error: z.ZodError): string {
+function formatZodErrors(error: z.ZodError): string {
   return error.issues
     .map((e) => `${e.path.join(".")}: ${e.message}`)
     .join("; ");

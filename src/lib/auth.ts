@@ -4,6 +4,18 @@ import GitHub from "next-auth/providers/github";
 import Discord from "next-auth/providers/discord";
 import { logger } from "./logger";
 
+// Runtime validation: ensure NEXTAUTH_SECRET is set in production (OWASP A07:2021)
+// Skip during Next.js build phase (module is evaluated but auth isn't used)
+if (
+  !process.env.NEXTAUTH_SECRET &&
+  process.env.NODE_ENV === "production" &&
+  !process.env.NEXT_PHASE
+) {
+  throw new Error(
+    "NEXTAUTH_SECRET is required in production. Generate with: openssl rand -base64 32"
+  );
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
@@ -49,7 +61,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         message: `User signed in via ${account?.provider}`,
         metadata: {
           provider: account?.provider,
-          email: user.email,
         },
       });
     },
@@ -64,7 +75,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       });
     },
     async linkAccount({ user, account }) {
-      logger.security("auth.signin", {
+      logger.security("auth.link_account", {
         userId: user.id,
         message: `Account linked: ${account.provider}`,
         metadata: { provider: account.provider },
@@ -77,6 +88,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   },
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60, // 7 days (OWASP A07:2021 - explicit session lifetime)
+    updateAge: 24 * 60 * 60, // Refresh JWT every 24 hours
+  },
+  cookies: {
+    sessionToken: {
+      name:
+        process.env.NODE_ENV === "production"
+          ? "__Secure-authjs.session-token"
+          : "authjs.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
   },
   // Only trust host in development; in production, verify via NEXTAUTH_URL
   trustHost: process.env.NODE_ENV === "development",

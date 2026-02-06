@@ -1,29 +1,25 @@
-"use client";
-
 import { forwardRef } from "react";
 import { cn } from "@/lib/utils";
 
 export interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "elevated" | "outlined";
-  padding?: "none" | "sm" | "md" | "lg";
+  padding?: "md" | "lg";
 }
 
 const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant = "default", padding = "md", children, ...props }, ref) => {
-    const baseStyles = "rounded-xl transition-shadow";
+    const baseStyles = "rounded-md transition-all duration-300 ease-out";
 
     const variants = {
       default:
-        "bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md",
+        "bg-[var(--surface)] border border-[var(--border)] shadow-editorial-sm",
       elevated:
-        "bg-white dark:bg-slate-800 shadow-lg hover:shadow-xl",
+        "bg-[var(--surface)] shadow-editorial hover:shadow-editorial-lg",
       outlined:
-        "bg-transparent border-2 border-slate-200 dark:border-slate-700",
+        "bg-transparent border border-[var(--border)]",
     };
 
     const paddings = {
-      none: "",
-      sm: "p-3",
       md: "p-5",
       lg: "p-8",
     };
@@ -46,7 +42,7 @@ const CardHeader = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn("pb-4 border-b border-slate-200 dark:border-slate-700", className)}
+      className={cn("pb-4 border-b border-stone-200 dark:border-stone-800", className)}
       {...props}
     />
   )
@@ -58,7 +54,7 @@ const CardTitle = forwardRef<HTMLHeadingElement, React.HTMLAttributes<HTMLHeadin
   ({ className, ...props }, ref) => (
     <h3
       ref={ref}
-      className={cn("text-lg font-semibold text-slate-900 dark:text-slate-100", className)}
+      className={cn("text-lg font-semibold font-serif text-stone-900 dark:text-stone-100", className)}
       {...props}
     />
   )
@@ -70,7 +66,7 @@ const CardDescription = forwardRef<HTMLParagraphElement, React.HTMLAttributes<HT
   ({ className, ...props }, ref) => (
     <p
       ref={ref}
-      className={cn("text-sm text-slate-500 dark:text-slate-400 mt-1", className)}
+      className={cn("text-sm text-stone-500 dark:text-stone-400 mt-1", className)}
       {...props}
     />
   )
@@ -91,7 +87,7 @@ const CardFooter = forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElemen
     <div
       ref={ref}
       className={cn(
-        "pt-4 mt-4 border-t border-slate-200 dark:border-slate-700 flex items-center",
+        "pt-4 mt-4 border-t border-stone-200 dark:border-stone-800 flex items-center",
         className
       )}
       {...props}

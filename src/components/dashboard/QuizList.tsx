@@ -30,11 +30,10 @@ export function QuizList() {
     try {
       const response = await fetch("/api/quizzes");
       if (response.ok) {
-        const data = await response.json();
-        setQuizzes(data);
+        const json = await response.json();
+        setQuizzes(json.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch quizzes:", error);
+    } catch {
     } finally {
       setIsLoading(false);
     }
@@ -48,8 +47,7 @@ export function QuizList() {
       if (response.ok) {
         setQuizzes(quizzes.filter((q) => q.id !== id));
       }
-    } catch (error) {
-      console.error("Failed to delete quiz:", error);
+    } catch {
     }
   };
 
@@ -73,13 +71,13 @@ export function QuizList() {
         <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
           <Plus size={40} className="text-primary-600" />
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+        <h2 className="font-serif text-2xl text-stone-900 dark:text-stone-100 mb-2">
           No quizzes yet
         </h2>
-        <p className="text-slate-500 dark:text-slate-400 mb-6 max-w-md mx-auto">
+        <p className="text-stone-500 dark:text-stone-400 mb-6 max-w-md mx-auto">
           Create your first AI-powered quiz by providing study material and let our AI generate questions for you.
         </p>
-        <Link href="/quiz/new">
+        <Link href="/dashboard/quiz/new">
           <Button size="lg">
             <Plus size={20} />
             Create Your First Quiz
@@ -96,25 +94,25 @@ export function QuizList() {
         <div className="relative flex-1">
           <Search
             size={20}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
           />
           <input
             type="text"
             placeholder="Search quizzes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-[var(--surface)] text-[var(--text-primary)] focus:ring-1 focus:ring-primary-400 focus:border-primary-400 outline-none transition-colors"
           />
         </div>
         <div className="relative">
           <Filter
             size={20}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
           />
           <select
             value={difficultyFilter}
             onChange={(e) => setDifficultyFilter(e.target.value as Difficulty | "all")}
-            className="pl-10 pr-8 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none appearance-none cursor-pointer"
+            className="pl-10 pr-8 py-2.5 rounded-lg border border-stone-300 dark:border-stone-700 bg-[var(--surface)] text-[var(--text-primary)] focus:ring-1 focus:ring-primary-400 focus:border-primary-400 outline-none appearance-none cursor-pointer transition-colors"
           >
             <option value="all">All Difficulties</option>
             <option value="mercy_mode">Mercy Mode</option>
@@ -125,30 +123,34 @@ export function QuizList() {
       </div>
 
       {/* Results count */}
-      <p className="text-sm text-slate-500 dark:text-slate-400">
+      <p className="font-mono text-xs tracking-wider text-[var(--text-tertiary)]">
         Showing {filteredQuizzes.length} of {quizzes.length} quizzes
       </p>
 
       {/* Quiz grid */}
       {filteredQuizzes.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-stone-500 dark:text-stone-400">
             No quizzes match your filters
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredQuizzes.map((quiz) => (
-            <QuizCard
+          {filteredQuizzes.map((quiz, index) => (
+            <div
               key={quiz.id}
-              id={quiz.id}
-              title={quiz.title}
-              description={quiz.description}
-              questionCount={quiz.questionCount}
-              difficulty={quiz.difficulty}
-              createdAt={quiz.createdAt}
-              onDelete={handleDelete}
-            />
+              className={`animate-fade-up stagger-${Math.min(index + 1, 8)}`}
+            >
+              <QuizCard
+                id={quiz.id}
+                title={quiz.title}
+                description={quiz.description}
+                questionCount={quiz.questionCount}
+                difficulty={quiz.difficulty}
+                createdAt={quiz.createdAt}
+                onDelete={handleDelete}
+              />
+            </div>
           ))}
         </div>
       )}

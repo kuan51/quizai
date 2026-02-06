@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
+  variant?: "primary" | "outline" | "ghost" | "accent";
   size?: "sm" | "md" | "lg";
   isLoading?: boolean;
 }
@@ -24,19 +24,17 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const baseStyles =
-      "inline-flex items-center justify-center font-medium rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
+      "inline-flex items-center justify-center font-medium rounded-md transition-all duration-200 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed";
 
     const variants = {
       primary:
-        "bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500 shadow-md hover:shadow-lg",
-      secondary:
-        "bg-slate-100 text-slate-900 hover:bg-slate-200 focus:ring-slate-500 dark:bg-slate-700 dark:text-slate-100 dark:hover:bg-slate-600",
+        "bg-primary-500 text-white hover:bg-primary-600 shadow-editorial-sm hover:shadow-editorial hover:translate-y-[-1px]",
       outline:
-        "border-2 border-primary-600 text-primary-600 hover:bg-primary-50 focus:ring-primary-500 dark:hover:bg-primary-950",
+        "border border-stone-300 text-stone-700 hover:bg-stone-50 dark:border-stone-600 dark:text-stone-300 dark:hover:bg-stone-800",
       ghost:
-        "text-slate-600 hover:bg-slate-100 focus:ring-slate-500 dark:text-slate-300 dark:hover:bg-slate-800",
-      danger:
-        "bg-error text-white hover:bg-error-dark focus:ring-error shadow-md",
+        "text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800",
+      accent:
+        "bg-accent-500 text-white hover:bg-accent-600 shadow-editorial-sm hover:shadow-editorial hover:translate-y-[-1px]",
     };
 
     const sizes = {

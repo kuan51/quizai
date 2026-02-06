@@ -3,7 +3,7 @@ import { QuizList } from "@/components/dashboard/QuizList";
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div>
       <Header
         title="Dashboard"
         description="Manage your AI-generated quizzes"

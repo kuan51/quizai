@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { Plus, Home, LogOut, Menu, X, BookOpen, Sparkles } from "lucide-react";
+import { Plus, Home, LogOut, Menu, X, BookOpen } from "lucide-react";
 import type { Difficulty } from "@/types";
 import { difficultyLabels } from "@/types";
 
@@ -29,35 +29,37 @@ export function Sidebar() {
     try {
       const response = await fetch("/api/quizzes");
       if (response.ok) {
-        const data = await response.json();
-        setQuizzes(data);
+        const json = await response.json();
+        setQuizzes(json.data);
       }
-    } catch (error) {
-      console.error("Failed to fetch quizzes:", error);
+    } catch {
     } finally {
       setIsLoading(false);
     }
   };
 
+  const collapsedClass = isCollapsed
+    ? "opacity-0 w-0 overflow-hidden"
+    : "opacity-100";
+
   return (
     <aside
-      className={`h-screen bg-slate-900 text-white flex flex-col transition-all duration-300 ${
+      className={`h-screen bg-primary-950 text-white flex flex-col transition-all duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Header */}
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
+      <div className="p-4 border-b border-primary-900 flex items-center justify-between">
         {!isCollapsed && (
-          <Link href="/dashboard" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-primary flex items-center justify-center">
-              <Sparkles size={18} className="text-white" />
-            </div>
-            <span className="font-bold text-xl">QuizAI</span>
+          <Link href="/dashboard" className="flex items-center">
+            <span className="font-serif text-xl tracking-tight text-white/90">
+              QuizAI
+            </span>
           </Link>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+          className="p-2 hover:bg-white/5 rounded-lg transition-colors text-stone-400 hover:text-stone-200"
           title={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {isCollapsed ? <Menu size={20} /> : <X size={20} />}
@@ -70,36 +72,46 @@ export function Sidebar() {
           href="/dashboard"
           className={`flex items-center gap-3 p-3 rounded-lg mb-1 transition-colors ${
             pathname === "/dashboard"
-              ? "bg-primary-600 text-white"
-              : "text-slate-300 hover:bg-slate-800"
+              ? "border-l-2 border-accent-400 bg-white/5 text-white"
+              : "text-stone-400 hover:bg-white/5 hover:text-stone-200"
           }`}
         >
           <Home size={20} />
-          {!isCollapsed && <span>Dashboard</span>}
+          <span className={`transition-opacity duration-200 ${collapsedClass}`}>
+            Dashboard
+          </span>
         </Link>
 
         {/* New Quiz Button */}
         <Link
           href="/dashboard/quiz/new"
-          className="flex items-center gap-3 p-3 rounded-lg mb-4 bg-primary-600 hover:bg-primary-700 transition-colors text-white"
+          className="flex items-center gap-3 p-3 rounded-lg mb-4 border border-accent-400 text-accent-400 hover:bg-accent-400/10 transition-colors"
         >
           <Plus size={20} />
-          {!isCollapsed && <span>New Quiz</span>}
+          <span className={`transition-opacity duration-200 ${collapsedClass}`}>
+            New Quiz
+          </span>
         </Link>
 
         {/* Quiz List */}
-        {!isCollapsed && (
+        <div
+          className={`transition-all duration-300 ${
+            isCollapsed
+              ? "opacity-0 max-h-0 overflow-hidden"
+              : "opacity-100 max-h-[9999px]"
+          }`}
+        >
           <div className="mb-4">
-            <h2 className="text-xs uppercase text-slate-500 font-semibold px-3 mb-2 flex items-center gap-2">
-              <BookOpen size={14} />
+            <h2 className="uppercase tracking-widest text-[10px] text-stone-500 font-semibold px-3 mb-2 flex items-center gap-2">
+              <BookOpen size={12} />
               Your Quizzes
             </h2>
             {isLoading ? (
               <div className="text-center py-4">
-                <div className="inline-block w-5 h-5 border-2 border-slate-600 border-t-primary-500 rounded-full animate-spin" />
+                <div className="inline-block w-5 h-5 border-2 border-primary-800 border-t-primary-400 rounded-full animate-spin" />
               </div>
             ) : quizzes.length === 0 ? (
-              <div className="text-center py-4 text-slate-500 text-sm">
+              <div className="text-center py-4 text-stone-600 text-sm">
                 No quizzes yet
               </div>
             ) : (
@@ -110,28 +122,32 @@ export function Sidebar() {
                     href={`/dashboard/quiz/${quiz.id}`}
                     className={`flex items-center gap-2 p-2 rounded-lg text-sm transition-colors ${
                       pathname === `/dashboard/quiz/${quiz.id}`
-                        ? "bg-slate-800 text-white"
-                        : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                        ? "border-l-2 border-accent-400 bg-white/5 text-white"
+                        : "text-stone-400 hover:bg-white/5 hover:text-stone-200"
                     }`}
                   >
-                    <span>{difficultyLabels[quiz.difficulty].emoji}</span>
+                    <span className="font-mono text-[11px] text-stone-500 shrink-0">
+                      {difficultyLabels[quiz.difficulty].label}
+                    </span>
                     <span className="truncate flex-1">{quiz.title}</span>
                   </Link>
                 ))}
               </div>
             )}
           </div>
-        )}
+        </div>
       </nav>
 
       {/* Footer */}
-      <div className="p-2 border-t border-slate-800">
+      <div className="p-2 border-t border-primary-900">
         <button
           onClick={() => signOut({ callbackUrl: "/" })}
-          className="flex items-center gap-3 p-3 rounded-lg w-full text-slate-400 hover:bg-slate-800 hover:text-white transition-colors"
+          className="flex items-center gap-3 p-3 rounded-lg w-full text-stone-500 hover:text-stone-300 hover:bg-white/5 transition-colors"
         >
           <LogOut size={20} />
-          {!isCollapsed && <span>Sign Out</span>}
+          <span className={`transition-opacity duration-200 ${collapsedClass}`}>
+            Sign Out
+          </span>
         </button>
       </div>
     </aside>

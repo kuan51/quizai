@@ -12,7 +12,7 @@ import {
 import { CreateQuizRequestSchema, validateRequest } from "@/lib/validations";
 
 // GET /api/quizzes - List all quizzes for the current user
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await auth();
     if (!session?.user?.id) {
@@ -25,6 +25,12 @@ export async function GET() {
       return rateLimitedResponse(rateLimit);
     }
 
+    // Pagination parameters with safe defaults
+    const url = new URL(request.url);
+    const page = Math.min(1000, Math.max(1, parseInt(url.searchParams.get("page") || "1", 10) || 1));
+    const limit = Math.min(100, Math.max(1, parseInt(url.searchParams.get("limit") || "20", 10) || 20));
+    const offset = (page - 1) * limit;
+
     const userQuizzes = await db()
       .select({
         id: quizzes.id,
@@ -36,11 +42,14 @@ export async function GET() {
       })
       .from(quizzes)
       .where(eq(quizzes.userId, session.user.id))
-      .orderBy(desc(quizzes.createdAt));
+      .orderBy(desc(quizzes.createdAt))
+      .limit(limit)
+      .offset(offset);
 
-    return NextResponse.json(userQuizzes, {
-      headers: getRateLimitHeaders(rateLimit),
-    });
+    return NextResponse.json(
+      { data: userQuizzes, page, limit },
+      { headers: getRateLimitHeaders(rateLimit) }
+    );
   } catch (error) {
     logger.error({ error }, "Error fetching quizzes");
     return NextResponse.json(

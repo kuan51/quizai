@@ -112,7 +112,6 @@ export interface QuizGenerationParams {
   questionCount: number;
   difficulty: Difficulty;
   questionTypes: QuestionType[];
-  currentPerformance?: number;
 }
 
 // Difficulty labels for UI

@@ -103,7 +103,7 @@ export const responses = sqliteTable("responses", {
     .references(() => attempts.id, { onDelete: "cascade" })
     .notNull(),
   questionId: text("question_id")
-    .references(() => questions.id)
+    .references(() => questions.id, { onDelete: "cascade" })
     .notNull(),
   userAnswer: text("user_answer"),
   isCorrect: integer("is_correct", { mode: "boolean" }),

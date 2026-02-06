@@ -28,12 +28,12 @@ export function QuizCard({
   onDelete,
 }: QuizCardProps) {
   const difficultyInfo = difficultyLabels[difficulty];
-  const difficultyVariant =
-    difficulty === "mercy_mode"
-      ? "mercy"
-      : difficulty === "mental_warfare"
-      ? "warfare"
-      : "abandon";
+  const difficultyMap = {
+    mercy_mode: { variant: "mercy" as const, border: "border-l-mercy" },
+    mental_warfare: { variant: "warfare" as const, border: "border-l-warfare" },
+    abandon_all_hope: { variant: "abandon" as const, border: "border-l-abandon" },
+  };
+  const { variant: difficultyVariant, border: borderColorClass } = difficultyMap[difficulty];
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -44,17 +44,17 @@ export function QuizCard({
   };
 
   return (
-    <Link href={`/quiz/${id}`}>
-      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer group">
+    <Link href={`/dashboard/quiz/${id}`}>
+      <Card className={`h-full border-l-2 ${borderColorClass} hover:translate-y-[-2px] hover:shadow-editorial transition-all duration-300 cursor-pointer group`}>
         <CardHeader className="pb-3 border-0">
           <div className="flex items-start justify-between gap-2">
-            <CardTitle className="line-clamp-2 group-hover:text-primary-600 transition-colors">
+            <CardTitle className="font-serif text-lg line-clamp-2 group-hover:text-primary-600 transition-colors">
               {title}
             </CardTitle>
             {onDelete && (
               <button
                 onClick={handleDelete}
-                className="p-1.5 text-slate-400 hover:text-error hover:bg-error-light rounded-lg transition-colors opacity-0 group-hover:opacity-100"
+                className="p-1.5 text-stone-300 hover:text-error hover:bg-error-light rounded-lg transition-colors opacity-0 group-hover:opacity-100"
                 title="Delete quiz"
               >
                 <Trash2 size={16} />
@@ -69,7 +69,7 @@ export function QuizCard({
         </CardHeader>
 
         <CardContent className="pt-3">
-          <div className="flex items-center gap-4 text-sm text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-4 font-mono text-xs text-[var(--text-tertiary)] tracking-wider">
             <div className="flex items-center gap-1.5">
               <FileQuestion size={16} />
               <span>{questionCount} questions</span>
@@ -83,7 +83,6 @@ export function QuizCard({
 
         <CardFooter className="pt-3 mt-3">
           <Badge variant={difficultyVariant}>
-            <span className="mr-1">{difficultyInfo.emoji}</span>
             {difficultyInfo.label}
           </Badge>
         </CardFooter>

@@ -8,6 +8,12 @@ import { Textarea } from "@/components/ui/Textarea";
 import type { Difficulty, QuestionType } from "@/types";
 import { difficultyLabels, questionTypeLabels } from "@/types";
 
+const difficultyNumerals: Record<Difficulty, string> = {
+  mercy_mode: "I",
+  mental_warfare: "II",
+  abandon_all_hope: "III",
+};
+
 export function QuizForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -64,7 +70,6 @@ export function QuizForm() {
       const quiz = await response.json();
       router.push(`/dashboard/quiz/${quiz.id}`);
     } catch (err) {
-      console.error("Error creating quiz:", err);
       setError(err instanceof Error ? err.message : "Failed to create quiz. Please try again.");
     } finally {
       setIsLoading(false);
@@ -72,7 +77,7 @@ export function QuizForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 max-w-2xl">
+    <form onSubmit={handleSubmit} className="space-y-10 max-w-2xl">
       {error && (
         <div className="p-4 bg-error-light text-error-dark rounded-lg border border-error">
           {error}
@@ -90,8 +95,8 @@ export function QuizForm() {
 
       {/* Question Count */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
-          Number of Questions: <span className="font-bold text-primary-600">{formData.questionCount}</span>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-2">
+          Number of Questions: <span className="font-mono text-primary-500">{formData.questionCount}</span>
         </label>
         <input
           type="range"
@@ -101,9 +106,9 @@ export function QuizForm() {
           onChange={(e) =>
             setFormData({ ...formData, questionCount: parseInt(e.target.value) })
           }
-          className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer dark:bg-slate-700 accent-primary-600"
+          className="w-full h-2 bg-stone-200 rounded-lg appearance-none cursor-pointer dark:bg-stone-700 accent-primary-600"
         />
-        <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400 mt-1">
+        <div className="flex justify-between text-xs text-stone-400 mt-1">
           <span>5</span>
           <span>50</span>
         </div>
@@ -111,29 +116,29 @@ export function QuizForm() {
 
       {/* Difficulty Selection */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-3">
           Difficulty Level
         </label>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {(Object.entries(difficultyLabels) as [Difficulty, typeof difficultyLabels[Difficulty]][]).map(
-            ([key, { label, description, emoji }]) => (
+            ([key, { label, description }]) => (
               <button
                 key={key}
                 type="button"
                 onClick={() => setFormData({ ...formData, difficulty: key })}
-                className={`p-4 rounded-lg border-2 text-left transition-all ${
+                className={`p-4 rounded-lg text-left transition-all ${
                   formData.difficulty === key
                     ? key === "mercy_mode"
-                      ? "border-mercy bg-mercy-light dark:bg-mercy/20"
+                      ? "bg-mercy-light border-l-4 border-l-mercy border border-mercy/30"
                       : key === "mental_warfare"
-                      ? "border-warfare bg-warfare-light dark:bg-warfare/20"
-                      : "border-abandon bg-abandon-light dark:bg-abandon/20"
-                    : "border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600"
+                      ? "bg-warfare-light border-l-4 border-l-warfare border border-warfare/30"
+                      : "bg-abandon-light border-l-4 border-l-abandon border border-abandon/30"
+                    : "border border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600"
                 }`}
               >
-                <div className="text-2xl mb-2">{emoji}</div>
-                <div className="font-medium text-slate-900 dark:text-slate-100">{label}</div>
-                <div className="text-sm text-slate-500 dark:text-slate-400">{description}</div>
+                <div className="font-serif text-xl mb-2">{difficultyNumerals[key]}</div>
+                <div className="font-medium text-stone-900 dark:text-stone-100">{label}</div>
+                <div className="text-sm text-stone-500 dark:text-stone-400">{description}</div>
               </button>
             )
           )}
@@ -142,7 +147,7 @@ export function QuizForm() {
 
       {/* Question Types */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">
+        <label className="block text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400 mb-3">
           Question Types
         </label>
         <div className="flex flex-wrap gap-2">
@@ -152,10 +157,10 @@ export function QuizForm() {
                 key={key}
                 type="button"
                 onClick={() => handleQuestionTypeToggle(key)}
-                className={`px-4 py-2 rounded-full border-2 transition-all text-sm font-medium ${
+                className={`px-4 py-2 rounded-sm border-2 transition-all text-sm font-medium ${
                   formData.questionTypes.includes(key)
-                    ? "bg-primary-600 text-white border-primary-600"
-                    : "border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 hover:border-primary-400"
+                    ? "bg-primary-500 text-white border-primary-500"
+                    : "border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-primary-400"
                 }`}
               >
                 {label}
@@ -181,6 +186,7 @@ export function QuizForm() {
       {/* Submit */}
       <Button
         type="submit"
+        variant="accent"
         isLoading={isLoading}
         className="w-full"
         size="lg"

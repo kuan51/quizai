@@ -113,49 +113,55 @@ export function QuestionRenderer({
 
   const getOptionClasses = (option: string) => {
     const base =
-      "w-full p-4 text-left rounded-lg border-2 transition-all flex items-center gap-3";
+      "w-full p-4 text-left rounded-md border transition-all flex items-center gap-3";
 
     if (showResult) {
       const correct = isOptionCorrect(option);
       const selected = wasOptionSelected(option);
 
       if (correct) {
-        return `${base} border-success bg-success-light text-success-dark`;
+        return `${base} border-success bg-success-light/50 text-success-dark`;
       }
       if (selected && !correct) {
-        return `${base} border-error bg-error-light text-error-dark`;
+        return `${base} border-error bg-error-light/50 text-error-dark`;
       }
-      return `${base} border-slate-200 dark:border-slate-700 opacity-60`;
+      return `${base} border-[var(--border)] opacity-50`;
     }
 
     if (isOptionSelected(option)) {
-      return `${base} border-primary-600 bg-primary-50 dark:bg-primary-950`;
+      return `${base} border-l-2 border-l-primary-500 bg-primary-50/50 dark:bg-primary-950/50 border-primary-300`;
     }
 
-    return `${base} border-slate-200 dark:border-slate-700 hover:border-primary-400 cursor-pointer`;
+    return `${base} border-[var(--border)] hover:border-primary-400 cursor-pointer`;
   };
 
-  const canSubmit =
-    question.type === "essay" || question.type === "short_answer"
-      ? textAnswer.trim().length > 0
-      : question.type === "select_all"
-      ? (selectedAnswer as string[]).length > 0
-      : (selectedAnswer as string).length > 0;
+  function getCanSubmit(): boolean {
+    switch (question.type) {
+      case "essay":
+      case "short_answer":
+        return textAnswer.trim().length > 0;
+      case "select_all":
+        return (selectedAnswer as string[]).length > 0;
+      default:
+        return (selectedAnswer as string).length > 0;
+    }
+  }
+  const canSubmit = getCanSubmit();
 
   return (
     <Card padding="lg" className="max-w-3xl mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <Badge variant="default" size="sm">
+        <Badge variant="default" size="sm" className="font-mono">
           {questionTypeLabels[question.type]}
         </Badge>
-        <span className="text-sm text-slate-500 dark:text-slate-400">
+        <span className="font-mono text-xs text-[var(--text-tertiary)]">
           Question {questionNumber} of {totalQuestions}
         </span>
       </div>
 
       {/* Question */}
-      <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+      <h2 className="font-serif text-2xl leading-relaxed text-[var(--text-primary)] mb-6">
         {question.content}
       </h2>
 
@@ -163,11 +169,11 @@ export function QuestionRenderer({
       {question.type === "essay" || question.type === "short_answer" ? (
         <div className="space-y-4">
           {showResult && userAnswer ? (
-            <div className="p-4 rounded-lg bg-slate-100 dark:bg-slate-800">
-              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
+            <div className="bg-[var(--surface-elevated)] rounded-md p-4">
+              <p className="font-mono text-xs uppercase tracking-wider text-[var(--text-tertiary)] mb-2">
                 Your Answer:
               </p>
-              <p className="text-slate-900 dark:text-slate-100">{userAnswer}</p>
+              <p className="text-[var(--text-primary)]">{userAnswer}</p>
             </div>
           ) : (
             <Textarea
@@ -192,6 +198,9 @@ export function QuestionRenderer({
               disabled={disabled || showResult}
               className={getOptionClasses(option)}
             >
+              <span className="flex-shrink-0 w-7 h-7 rounded-sm bg-stone-100 dark:bg-stone-800 flex items-center justify-center font-mono text-xs text-[var(--text-secondary)]">
+                {option.charAt(0)}
+              </span>
               <span className="flex-1">{option}</span>
               {showResult && isOptionCorrect(option) && (
                 <Check className="text-success" size={20} />
@@ -207,7 +216,7 @@ export function QuestionRenderer({
       {/* Result feedback */}
       {showResult && (
         <div
-          className={`mt-6 p-4 rounded-lg ${
+          className={`mt-6 p-4 rounded-md ${
             isCorrect
               ? "bg-success-light border border-success"
               : "bg-error-light border border-error"
@@ -227,7 +236,7 @@ export function QuestionRenderer({
             )}
           </div>
           {question.explanation && (
-            <p className="text-sm text-slate-700 dark:text-slate-300">
+            <p className="font-serif italic text-sm text-[var(--text-secondary)]">
               {question.explanation}
             </p>
           )}
@@ -237,7 +246,7 @@ export function QuestionRenderer({
       {/* Submit button */}
       {!showResult && !disabled && (
         <div className="mt-6">
-          <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full">
+          <Button variant="accent" onClick={handleSubmit} disabled={!canSubmit} className="w-full">
             Submit Answer
           </Button>
         </div>

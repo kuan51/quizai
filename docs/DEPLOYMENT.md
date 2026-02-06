@@ -2,36 +2,9 @@
 
 This guide covers deploying QuizAI to various environments.
 
-## Docker Deployment (Recommended)
+## Production Configuration
 
-### Prerequisites
-
-- Docker Engine 20.10+
-- Docker Compose 2.0+
-
-### Quick Start
-
-1. Navigate to the build directory:
-   ```bash
-   cd build
-   ```
-
-2. Create and configure the environment file:
-   ```bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   ```
-
-3. Build and start the containers:
-   ```bash
-   docker-compose up -d --build
-   ```
-
-4. Access the application at http://localhost:3000
-
-### Production Configuration
-
-For production deployments, update your `.env` file:
+For production deployments, configure your environment:
 
 ```env
 # Use your actual domain
@@ -77,42 +50,6 @@ server {
 }
 ```
 
-### Docker Compose with Nginx
-
-Extended docker-compose.yml with nginx:
-
-```yaml
-version: "3.8"
-
-services:
-  quiz-app:
-    build:
-      context: ..
-      dockerfile: build/Dockerfile
-    expose:
-      - "3000"
-    environment:
-      # ... your environment variables
-    volumes:
-      - quiz-data:/app/data
-    restart: unless-stopped
-
-  nginx:
-    image: nginx:alpine
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - /path/to/certs:/etc/nginx/certs:ro
-    depends_on:
-      - quiz-app
-    restart: unless-stopped
-
-volumes:
-  quiz-data:
-```
-
 ---
 
 ## Cloud Platform Deployments
@@ -146,7 +83,7 @@ app = "quizai"
 primary_region = "ord"
 
 [build]
-  dockerfile = "../build/Dockerfile"
+  builder = "heroku/buildpacks:20"
 
 [env]
   NODE_ENV = "production"
@@ -180,9 +117,9 @@ The default SQLite database works well for:
 - Low to moderate traffic
 - Development and testing
 
-For SQLite in Docker, ensure:
-- Volume is mounted for data persistence
-- Backup strategy is in place
+Ensure:
+- The `data` directory exists and is writable
+- A backup strategy is in place
 
 ### Database Backup
 
@@ -193,7 +130,7 @@ Create a backup script:
 # backup.sh
 BACKUP_DIR=/path/to/backups
 DATE=$(date +%Y%m%d_%H%M%S)
-docker cp quizai_quiz-app_1:/app/data/quiz.db $BACKUP_DIR/quiz_$DATE.db
+cp ./data/quiz.db $BACKUP_DIR/quiz_$DATE.db
 ```
 
 ### Scaling Considerations
@@ -218,23 +155,9 @@ The `/api/health` endpoint returns:
 }
 ```
 
-### Docker Health Check
-
-The docker-compose.yml includes a health check:
-```yaml
-healthcheck:
-  test: ["CMD", "wget", "-q", "--spider", "http://localhost:3000/api/health"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-```
-
 ### Logging
 
-View container logs:
-```bash
-docker-compose logs -f quiz-app
-```
+The application uses structured logging via pino. In development, logs are pretty-printed. In production, logs are output as JSON for consumption by log aggregation services.
 
 ---
 
@@ -253,12 +176,7 @@ docker-compose logs -f quiz-app
 
 ## Troubleshooting
 
-### Container Won't Start
-
-Check logs:
-```bash
-docker-compose logs quiz-app
-```
+### Application Won't Start
 
 Common issues:
 - Missing environment variables
@@ -267,9 +185,9 @@ Common issues:
 
 ### Database Errors
 
-Ensure volume permissions:
+Ensure the `data` directory exists and is writable:
 ```bash
-docker exec -it quizai_quiz-app_1 ls -la /app/data
+ls -la ./data
 ```
 
 ### OAuth Redirect Errors

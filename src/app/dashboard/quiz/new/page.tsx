@@ -3,7 +3,7 @@ import { QuizForm } from "@/components/quiz/QuizForm";
 
 export default function NewQuizPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div>
       <Header
         title="Create New Quiz"
         description="Generate an AI-powered quiz from your study material"

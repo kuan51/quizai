@@ -7,12 +7,20 @@ import type { QuestionType, Difficulty, GeneratedQuiz, GeneratedQuestion } from 
 
 export type AIProvider = "openai" | "anthropic" | "claude-code";
 
+export const difficultyInstructions: Record<string, string> = {
+  mercy_mode:
+    "Create beginner-friendly questions with clear answers. Include helpful hints in the explanations. Focus on fundamental concepts and avoid trick questions. Make sure the correct answer is clearly the best choice.",
+  mental_warfare:
+    "Create challenging questions that require deep understanding. Some questions should have nuanced answers that require careful thought. Include some questions that test application of concepts, not just recall. The explanations should help students understand the deeper reasoning.",
+  abandon_all_hope:
+    "Create extremely difficult questions that test expert-level knowledge. Include edge cases, exceptions to rules, and questions that require synthesis of multiple concepts. Some questions should require careful analysis to distinguish between very similar options. Expect students to have mastered the material.",
+};
+
 export interface QuizGenerationParams {
   studyMaterial: string;
   questionCount: number;
   difficulty: Difficulty;
   questionTypes: QuestionType[];
-  currentPerformance?: number; // 0-1 scale for adaptive difficulty
 }
 
 export async function generateQuiz(
@@ -83,26 +91,6 @@ export async function generateQuiz(
   });
 
   return result;
-}
-
-// Adaptive difficulty calculation
-export function calculateAdaptiveDifficulty(
-  baseDifficulty: Difficulty,
-  recentPerformance: number // 0-1 scale
-): number {
-  const baseScores = {
-    mercy_mode: 0.3,
-    mental_warfare: 0.6,
-    abandon_all_hope: 0.9,
-  };
-
-  const base = baseScores[baseDifficulty];
-
-  // Adjust based on performance: good performance increases difficulty
-  // Poor performance decreases it (within bounds of selected mode)
-  const adjustment = (recentPerformance - 0.5) * 0.3;
-
-  return Math.max(0.1, Math.min(1.0, base + adjustment));
 }
 
 // Build the quiz generation prompt with defensive prompting
@@ -282,4 +270,51 @@ export function parseQuizResponse(responseText: string): GeneratedQuiz {
     title: String(data.title),
     questions,
   };
+}
+
+export function buildGradingPrompt(
+  question: string,
+  correctAnswer: string,
+  userAnswer: string,
+  questionType: "essay" | "short_answer"
+): string {
+  return `You are an expert grader for educational quizzes. Grade the following ${questionType} response.
+
+QUESTION:
+${question}
+
+EXPECTED ANSWER/KEY POINTS:
+${correctAnswer}
+
+STUDENT'S ANSWER:
+${userAnswer}
+
+Grade this response and provide:
+1. A score from 0 to 100
+2. Whether it should be considered correct (score >= 70)
+3. Constructive feedback explaining what was good and what could be improved
+
+Return ONLY valid JSON in this format:
+{
+  "score": 85,
+  "isCorrect": true,
+  "feedback": "Your answer correctly identified... However, you could improve by..."
+}`;
+}
+
+export function parseGradingResponse(content: string): { isCorrect: boolean; feedback: string; score: number } {
+  try {
+    const result = JSON.parse(content.trim());
+    return {
+      score: result.score,
+      isCorrect: result.isCorrect,
+      feedback: result.feedback,
+    };
+  } catch {
+    return {
+      score: 0,
+      isCorrect: false,
+      feedback: "Unable to grade response automatically. Please review manually.",
+    };
+  }
 }

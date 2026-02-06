@@ -38,6 +38,16 @@ interface Answer {
   isCorrect: boolean;
 }
 
+function getPerformanceFeedback(percentage: number): { className: string; message: string } {
+  if (percentage >= 80) {
+    return { className: "bg-success-light text-success-dark", message: "Excellent work! You really know this material!" };
+  }
+  if (percentage >= 60) {
+    return { className: "bg-warning-light text-warning-dark", message: "Good job! Keep studying to improve further." };
+  }
+  return { className: "bg-error-light text-error-dark", message: "Keep practicing! Review the material and try again." };
+}
+
 export default function QuizPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
@@ -126,7 +136,7 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center">
+      <div className="flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
       </div>
     );
@@ -134,11 +144,11 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
 
   if (error || !quiz) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div>
         <Header title="Quiz Not Found" />
         <main className="p-6">
           <Card padding="lg" className="max-w-lg mx-auto text-center">
-            <p className="text-slate-600 dark:text-slate-400 mb-4">
+            <p className="text-[var(--text-secondary)] mb-4">
               {error || "This quiz could not be found."}
             </p>
             <Button onClick={() => router.push("/dashboard")}>
@@ -161,61 +171,54 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
     const seconds = timeTaken % 60;
 
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+      <div>
         <Header title="Quiz Complete" />
         <main className="p-6">
           <Card padding="lg" className="max-w-2xl mx-auto">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center">
-                <Trophy size={40} className="text-primary-600" />
+            <div className="animate-fade-up stagger-1 text-center mb-8">
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-accent-100 dark:bg-accent-700/20 flex items-center justify-center">
+                <Trophy size={40} className="text-accent-500" />
               </div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+              <h2 className="text-2xl font-bold text-[var(--text-primary)] mb-2">
                 {quiz.title}
               </h2>
               <DifficultyIndicator difficulty={quiz.difficulty} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-8">
-              <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-center">
-                <p className="text-4xl font-bold text-primary-600 mb-1">
+            <div className="animate-fade-up stagger-2 grid grid-cols-2 gap-4 mb-8">
+              <div className="p-4 rounded-lg bg-[var(--surface-elevated)] text-center">
+                <p className="font-serif text-5xl font-bold text-primary-600 mb-1">
                   {percentage}%
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Score</p>
+                <p className="font-mono text-xs uppercase tracking-wider text-[var(--text-tertiary)]">Score</p>
               </div>
-              <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800 text-center">
-                <p className="text-4xl font-bold text-slate-900 dark:text-slate-100 mb-1">
+              <div className="p-4 rounded-lg bg-[var(--surface-elevated)] text-center">
+                <p className="font-mono text-2xl font-bold text-[var(--text-primary)] mb-1">
                   {correctCount}/{totalQuestions}
                 </p>
-                <p className="text-sm text-slate-500 dark:text-slate-400">Correct</p>
+                <p className="font-mono text-xs uppercase tracking-wider text-[var(--text-tertiary)]">Correct</p>
               </div>
             </div>
 
-            <div className="flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 mb-8">
+            <div className="animate-fade-up stagger-3 flex items-center justify-center gap-2 text-[var(--text-tertiary)] mb-8">
               <Clock size={20} />
-              <span>
+              <span className="font-mono text-sm text-[var(--text-tertiary)]">
                 Time: {minutes > 0 ? `${minutes}m ` : ""}
                 {seconds}s
               </span>
             </div>
 
             {/* Performance message */}
-            <div
-              className={`p-4 rounded-xl mb-8 text-center ${
-                percentage >= 80
-                  ? "bg-success-light text-success-dark"
-                  : percentage >= 60
-                  ? "bg-warning-light text-warning-dark"
-                  : "bg-error-light text-error-dark"
-              }`}
-            >
-              {percentage >= 80
-                ? "Excellent work! You really know this material!"
-                : percentage >= 60
-                ? "Good job! Keep studying to improve further."
-                : "Keep practicing! Review the material and try again."}
-            </div>
+            {(() => {
+              const feedback = getPerformanceFeedback(percentage);
+              return (
+                <div className={`animate-fade-up stagger-4 p-4 rounded-lg mb-8 text-center font-serif italic ${feedback.className}`}>
+                  {feedback.message}
+                </div>
+              );
+            })()}
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="animate-fade-up stagger-5 flex flex-col sm:flex-row gap-4">
               <Button
                 variant="outline"
                 className="flex-1"
@@ -241,14 +244,14 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
   const currentAnswer = answers.find((a) => a.questionId === currentQuestion.id);
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950">
+    <div>
       <Header title={quiz.title} />
       <main className="p-6">
         {/* Progress bar */}
         <div className="max-w-3xl mx-auto mb-6">
           <div className="flex items-center justify-between mb-2">
             <DifficultyIndicator difficulty={quiz.difficulty} size="sm" />
-            <Badge variant="default">
+            <Badge variant="default" className="font-mono">
               {currentQuestionIndex + 1} of {quiz.questions.length}
             </Badge>
           </div>
@@ -260,16 +263,19 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
         </div>
 
         {/* Question */}
-        <QuestionRenderer
-          question={currentQuestion}
-          questionNumber={currentQuestionIndex + 1}
-          totalQuestions={quiz.questions.length}
-          onAnswer={handleAnswer}
-          showResult={showResult}
-          userAnswer={currentAnswer?.userAnswer}
-          isCorrect={currentAnswer?.isCorrect}
-          disabled={showResult}
-        />
+        <div key={currentQuestionIndex} className="animate-fade-up">
+          <QuestionRenderer
+            key={currentQuestion.id}
+            question={currentQuestion}
+            questionNumber={currentQuestionIndex + 1}
+            totalQuestions={quiz.questions.length}
+            onAnswer={handleAnswer}
+            showResult={showResult}
+            userAnswer={currentAnswer?.userAnswer}
+            isCorrect={currentAnswer?.isCorrect}
+            disabled={showResult}
+          />
+        </div>
 
         {/* Navigation */}
         {showResult && (
