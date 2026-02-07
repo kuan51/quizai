@@ -3,5 +3,6 @@ docs/
 .git/
 *.md
 .env*.local
+.env*.preview
 .env
 node_modules/

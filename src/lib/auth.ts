@@ -4,6 +4,8 @@ import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
 import Discord from "next-auth/providers/discord";
 import { logger } from "./logger";
+import { db } from "./db";
+import { users } from "./db/schema";
 
 // Runtime validation: ensure NEXTAUTH_SECRET is set in production (OWASP A07:2021)
 // Skip during Next.js build phase (module is evaluated but auth isn't used)
@@ -65,6 +67,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         });
         return false;
       }
+
+      // Ensure user exists in DB for foreign key references (JWT strategy doesn't persist users)
+      if (user.id && user.email) {
+        try {
+          await db().insert(users).values({
+            id: user.id,
+            email: user.email,
+            name: user.name ?? null,
+            image: user.image ?? null,
+          }).onConflictDoUpdate({
+            target: users.id,
+            set: {
+              name: user.name ?? null,
+              image: user.image ?? null,
+            },
+          });
+        } catch (err) {
+          logger.error({
+            message: "Failed to upsert user record",
+            metadata: { error: err instanceof Error ? err.message : "Unknown" },
+          });
+        }
+      }
+
       return true;
     },
     async jwt({ token, user }) {

@@ -129,6 +129,9 @@ export async function POST(request: Request) {
       message: "Quiz generation failed",
       metadata: {
         error: error instanceof Error ? error.message : "Unknown error",
+        cause: error instanceof Error && error.cause instanceof Error
+          ? error.cause.message
+          : undefined,
       },
     });
 

@@ -214,6 +214,9 @@ export async function POST(request: Request) {
       message: "File-based quiz generation failed",
       metadata: {
         error: error instanceof Error ? error.message : "Unknown error",
+        cause: error instanceof Error && error.cause instanceof Error
+          ? error.cause.message
+          : undefined,
       },
     });
 

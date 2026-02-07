@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { useQuizData } from "@/contexts/QuizDataContext";
 import dynamic from "next/dynamic";
 
 const FileUploadZone = dynamic(
@@ -32,6 +33,7 @@ const difficultyNumerals: Record<Difficulty, string> = {
 
 export function QuizForm() {
   const router = useRouter();
+  const { refreshQuizzes } = useQuizData();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [warnings, setWarnings] = useState<string[]>([]);
@@ -121,6 +123,7 @@ export function QuizForm() {
       }
 
       router.push(`/dashboard/quiz/${quiz.id}`);
+      refreshQuizzes();
     } catch (err) {
       setError(
         err instanceof Error
