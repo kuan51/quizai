@@ -6,8 +6,8 @@ This guide covers the complete setup process for QuizAI, including OAuth provide
 
 ## Prerequisites
 
-- Node.js 20 or later
-- npm 10 or later
+- Node.js 24 or later
+- Bun 1.2 or later
 - Git
 
 ## Installation
@@ -17,7 +17,7 @@ This guide covers the complete setup process for QuizAI, including OAuth provide
 ```bash
 git clone https://github.com/kuan51/quizai.git
 cd quizai/src
-npm install
+bun install
 ```
 
 ### 2. Environment Configuration
@@ -108,7 +108,7 @@ Configure at least one AI provider for quiz generation.
 
 For local development, you can use Claude Code CLI instead of API keys:
 
-1. Install Claude Code: `npm install -g @anthropic-ai/claude-code`
+1. Install Claude Code: `bun install -g @anthropic-ai/claude-code`
 2. Authenticate: `claude auth login`
 3. Enable in `.env.local`:
    ```
@@ -138,16 +138,16 @@ For manual database operations:
 
 ```bash
 # Generate migrations
-npm run db:generate
+bun run db:generate
 
 # Apply migrations
-npm run db:migrate
+bun run db:migrate
 
 # Push schema changes (development)
-npm run db:push
+bun run db:push
 
 # Open Drizzle Studio
-npm run db:studio
+bun run db:studio
 ```
 
 ## Running the Application
@@ -155,7 +155,7 @@ npm run db:studio
 ### Development Mode
 
 ```bash
-npm run dev
+bun run dev
 ```
 
 The application will be available at http://localhost:3000.
@@ -163,8 +163,8 @@ The application will be available at http://localhost:3000.
 ### Production Build
 
 ```bash
-npm run build
-npm start
+bun run build
+bun start
 ```
 
 ## Troubleshooting

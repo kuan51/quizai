@@ -13,7 +13,7 @@ Set up your local development environment by following the [Getting Started Guid
 1. **Fork and clone** the repository
 2. **Create a branch** from `master` for your work
 3. **Make your changes** with clear, focused commits
-4. **Test locally** -- ensure `npm run build` succeeds and the application works as expected
+4. **Test locally** -- ensure `bun run build` succeeds and the application works as expected
 5. **Open a pull request** against `master`
 
 ### Available Scripts
@@ -22,13 +22,13 @@ Run these from the `src/` directory:
 
 | Script | Purpose |
 |--------|---------|
-| `npm run dev` | Start the development server |
-| `npm run build` | Production build |
-| `npm run lint` | Run ESLint |
-| `npm run db:generate` | Generate Drizzle migrations |
-| `npm run db:migrate` | Apply database migrations |
-| `npm run db:push` | Push schema changes (development) |
-| `npm run db:studio` | Open Drizzle Studio |
+| `bun run dev` | Start the development server |
+| `bun run build` | Production build |
+| `bun run lint` | Run ESLint |
+| `bun run db:generate` | Generate Drizzle migrations |
+| `bun run db:migrate` | Apply database migrations |
+| `bun run db:push` | Push schema changes (development) |
+| `bun run db:studio` | Open Drizzle Studio |
 
 ## Code Style
 
@@ -57,7 +57,7 @@ src/
 2. **Description**: Explain what the PR does and why. Link any related issues.
 3. **Scope**: Keep PRs focused. One feature or fix per PR is preferred.
 4. **Review**: All PRs require review before merging.
-5. **Build**: The PR must pass `npm run build` and `npm run lint` without errors.
+5. **Build**: The PR must pass `bun run build` and `bun run lint` without errors.
 
 ## Security
 

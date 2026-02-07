@@ -1,16 +1,22 @@
-FROM node:20-alpine AS deps
+FROM registry.access.redhat.com/ubi10/nodejs-24:latest AS deps
 WORKDIR /app
-COPY src/package*.json ./
-RUN npm ci
+USER 0
+RUN npm install -g bun
+COPY src/package.json src/bun.lock ./
+RUN bun install --frozen-lockfile
+USER 1001
 
-FROM node:20-alpine AS builder
+FROM registry.access.redhat.com/ubi10/nodejs-24:latest AS builder
 WORKDIR /app
+USER 0
+RUN npm install -g bun
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY src/ .
-RUN npm run build
+RUN bun run build
+USER 1001
 
-FROM node:20-alpine AS runner
+FROM registry.access.redhat.com/ubi10/nodejs-24-minimal:latest AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1

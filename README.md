@@ -36,14 +36,14 @@ git clone https://github.com/kuan51/quizai.git
 cd quizai
 
 # 2. Install dependencies
-cd src && npm install
+cd src && bun install
 
 # 3. Configure environment
 cp .env.example .env.local
 # Edit .env.local with your OAuth and AI provider credentials
 
 # 4. Start the development server
-npm run dev
+bun run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
