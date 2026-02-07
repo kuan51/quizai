@@ -3,6 +3,12 @@ import { buildQuizPrompt, parseQuizResponse, difficultyInstructions, buildGradin
 import type { QuizGenerationParams } from "./index";
 import type { GeneratedQuiz } from "@/types";
 
+// Models that don't support custom temperature values (reasoning models, gpt-5 family)
+function supportsTemperature(model: string): boolean {
+  const noTempPatterns = [/^o\d/, /^gpt-5/];
+  return !noTempPatterns.some((pattern) => pattern.test(model));
+}
+
 // Lazy initialization to avoid API key errors during build
 let _openai: OpenAI | null = null;
 
@@ -23,8 +29,10 @@ export async function generateWithOpenAI(
     difficultyInstructions[params.difficulty]
   );
 
+  const model = process.env.OPENAI_MODEL || "gpt-4-turbo-preview";
+
   const response = await getOpenAI().chat.completions.create({
-    model: process.env.OPENAI_MODEL || "gpt-4-turbo-preview",
+    model,
     messages: [
       {
         role: "system",
@@ -34,7 +42,7 @@ export async function generateWithOpenAI(
       { role: "user", content: prompt },
     ],
     max_completion_tokens: 4096,
-    temperature: 0.7,
+    ...(supportsTemperature(model) && { temperature: 0.7 }),
     response_format: { type: "json_object" },
   });
 
@@ -55,8 +63,10 @@ export async function gradeWithOpenAI(
 ): Promise<{ isCorrect: boolean; feedback: string; score: number }> {
   const prompt = buildGradingPrompt(question, correctAnswer, userAnswer, questionType);
 
+  const model = process.env.OPENAI_MODEL || "gpt-4-turbo-preview";
+
   const response = await getOpenAI().chat.completions.create({
-    model: process.env.OPENAI_MODEL || "gpt-4-turbo-preview",
+    model,
     messages: [
       {
         role: "system",
@@ -65,7 +75,7 @@ export async function gradeWithOpenAI(
       { role: "user", content: prompt },
     ],
     max_completion_tokens: 1024,
-    temperature: 0.3,
+    ...(supportsTemperature(model) && { temperature: 0.3 }),
     response_format: { type: "json_object" },
   });
 
