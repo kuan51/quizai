@@ -76,6 +76,15 @@ export default auth((req) => {
     return NextResponse.redirect(loginUrl);
   }
 
+  // Additional check: ensure user.id exists in the session
+  // This catches JWT tokens that are valid but missing the id field
+  if (!req.auth.user?.id) {
+    const loginUrl = new URL("/login", req.url);
+    loginUrl.searchParams.set("callbackUrl", pathname);
+    loginUrl.searchParams.set("error", "InvalidSession");
+    return NextResponse.redirect(loginUrl);
+  }
+
   return NextResponse.next();
 });
 

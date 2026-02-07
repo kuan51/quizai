@@ -28,6 +28,7 @@ bun-debug.log*
 
 # local env files
 .env*.local
+.env*.preview
 .env
 !.env.example
 

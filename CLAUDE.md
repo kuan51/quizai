@@ -49,7 +49,7 @@ Always run `bun run build` to verify changes before committing.
 ### Database Migrations
 
 **Initial Setup**:
-1. Set `DATABASE_URL` in `src/.env.local` (e.g., `postgresql://user:password@localhost:5432/quizai`)
+1. Set `POSTGRES_URL` in `.env.local` (e.g., `postgresql://user:password@localhost:5432/quizai`)
 2. Run migrations: `bun run db:migrate`
 
 **Making Schema Changes**:
@@ -63,7 +63,7 @@ Always run `bun run build` to verify changes before committing.
 
 ### Environment Setup
 
-Copy `.env.example` to `src/.env.local`. Requires at minimum: one OAuth provider (Google/GitHub/Discord), one AI provider key (Anthropic or OpenAI), `NEXTAUTH_SECRET`, and `DATABASE_URL`. Set `AUTHORIZED_EMAILS="*"` for development.
+Copy `.env.example` to `.env.local`. Requires at minimum: one OAuth provider (Google/GitHub/Discord), one AI provider key (Anthropic or OpenAI), `NEXTAUTH_SECRET`, and `POSTGRES_URL`. Set `AUTHORIZED_EMAILS="*"` for development.
 
 ## Rate Limits
 

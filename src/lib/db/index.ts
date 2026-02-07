@@ -3,7 +3,7 @@ import { drizzle } from "drizzle-orm/vercel-postgres";
 import * as schema from "./schema";
 
 // Create Drizzle instance with Vercel Postgres
-// The @vercel/postgres SDK automatically uses DATABASE_URL from Vercel Postgres storage
+// The @vercel/postgres SDK automatically uses POSTGRES_URL from environment
 // No manual connection setup needed - Vercel handles connection pooling
 const _db = drizzle(sql, { schema });
 

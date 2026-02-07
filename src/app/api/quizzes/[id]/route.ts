@@ -30,19 +30,12 @@ export async function GET(
 
     const { id } = await params;
 
-    // Single query: get quiz and questions together
-    const [quizRow, quizQuestions] = await Promise.all([
-      db()
-        .select()
-        .from(quizzes)
-        .where(and(eq(quizzes.id, id), eq(quizzes.userId, session.user.id)))
-        .limit(1),
-      db()
-        .select()
-        .from(questions)
-        .where(eq(questions.quizId, id))
-        .orderBy(questions.order),
-    ]);
+    // Verify quiz ownership first
+    const quizRow = await db()
+      .select()
+      .from(quizzes)
+      .where(and(eq(quizzes.id, id), eq(quizzes.userId, session.user.id)))
+      .limit(1);
 
     if (quizRow.length === 0) {
       return NextResponse.json(
@@ -50,6 +43,13 @@ export async function GET(
         { status: 404, headers: getRateLimitHeaders(rateLimit) }
       );
     }
+
+    // Fetch questions only after ownership is confirmed
+    const quizQuestions = await db()
+      .select()
+      .from(questions)
+      .where(eq(questions.quizId, id))
+      .orderBy(questions.order);
 
     // Safe JSON parsing for options
     const parsedQuestions = quizQuestions.map((q) => ({
@@ -121,7 +121,7 @@ export async function DELETE(
     }
 
     // Delete the quiz (questions will be cascade deleted)
-    await db().delete(quizzes).where(eq(quizzes.id, id));
+    await db().delete(quizzes).where(and(eq(quizzes.id, id), eq(quizzes.userId, session.user.id)));
 
     logger.audit("quiz.delete", {
       userId: session.user.id,

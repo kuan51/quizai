@@ -7,6 +7,7 @@ import { db } from "@/lib/db";
 import { quizzes } from "@/lib/db/schema";
 import { eq, desc } from "drizzle-orm";
 import type { QuizSummary } from "@/contexts/QuizDataContext";
+import { logger } from "@/lib/logger";
 
 export default async function DashboardLayout({
   children,
@@ -17,6 +18,19 @@ export default async function DashboardLayout({
 
   // Redirect to login if not authenticated
   if (!session) {
+    redirect("/login");
+  }
+
+  // Additional safety check: ensure session has user.id
+  if (!session.user?.id) {
+    logger.error({
+      message: "Session exists but missing user.id - forcing re-authentication",
+      metadata: {
+        hasSession: !!session,
+        hasUser: !!session.user,
+        userId: session.user?.id
+      }
+    });
     redirect("/login");
   }
 
@@ -31,7 +45,7 @@ export default async function DashboardLayout({
       createdAt: quizzes.createdAt,
     })
     .from(quizzes)
-    .where(eq(quizzes.userId, session.user!.id!))
+    .where(eq(quizzes.userId, session.user.id))
     .orderBy(desc(quizzes.createdAt))
     .limit(100);
 

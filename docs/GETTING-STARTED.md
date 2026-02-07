@@ -178,7 +178,7 @@ bun start
 ### Database Errors
 
 - Ensure the `data` directory exists and is writable
-- Check DATABASE_URL in your environment
+- Check POSTGRES_URL in your environment
 
 ### AI Provider Errors
 

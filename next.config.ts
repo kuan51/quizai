@@ -32,7 +32,7 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval'", // Required for Next.js
+      `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""}`, // unsafe-eval only in dev for Fast Refresh
       "style-src 'self' 'unsafe-inline'", // Required for Tailwind
       "img-src 'self' data: https://avatars.githubusercontent.com https://lh3.googleusercontent.com https://cdn.discordapp.com",
       "font-src 'self'",

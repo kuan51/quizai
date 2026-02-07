@@ -39,8 +39,8 @@ cd quizai
 bun install
 
 # 3. Configure environment
-cp .env.example src/.env.local
-# Edit src/.env.local with your OAuth and AI provider credentials
+cp .env.example .env.local
+# Edit .env.local with your OAuth and AI provider credentials
 
 # 4. Start the development server
 bun run dev

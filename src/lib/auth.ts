@@ -1,3 +1,4 @@
+import "./auth-url"; // Must be first: sets NEXTAUTH_URL before NextAuth reads it
 import NextAuth from "next-auth";
 import Google from "next-auth/providers/google";
 import GitHub from "next-auth/providers/github";
@@ -68,14 +69,30 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
     async jwt({ token, user }) {
       // Persist user id to token on initial sign in
-      if (user) {
+      if (user?.id) {
         token.id = user.id;
       }
+      // Token object persists automatically across requests
+      // token.id will be available on subsequent calls even when user is undefined
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.id) {
-        session.user.id = token.id as string;
+      if (session.user) {
+        if (token.id) {
+          session.user.id = token.id as string;
+        } else {
+          // Log the issue but don't throw - let middleware/layouts handle it
+          // Throwing in Edge runtime (middleware) can cause unexpected behavior
+          logger.error({
+            message: "JWT token missing id field during session creation",
+            metadata: {
+              hasUser: !!session.user,
+              tokenKeys: Object.keys(token)
+            }
+          });
+          // Returning session without id - middleware and layouts will catch this
+          // and redirect to login gracefully
+        }
       }
       return session;
     },
@@ -140,8 +157,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
     },
   },
-  // Only trust host in development; in production, verify via NEXTAUTH_URL
-  trustHost: process.env.NODE_ENV === "development",
+  // Trust host header in development and on Vercel (where headers are reliable)
+  trustHost: process.env.NODE_ENV === "development" || !!process.env.VERCEL,
 });
 
 // Type augmentation for session

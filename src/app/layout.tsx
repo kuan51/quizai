@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Instrument_Serif, Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
-import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 import "./globals.css";
 
@@ -47,9 +46,7 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="antialiased font-sans">
-        <SessionProvider>
-          <ThemeProvider>{children}</ThemeProvider>
-        </SessionProvider>
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
