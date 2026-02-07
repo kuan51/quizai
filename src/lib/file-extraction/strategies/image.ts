@@ -106,7 +106,7 @@ async function extractWithOpenAI(
 ): Promise<string> {
   const response = await getOpenAI().chat.completions.create({
     model: process.env.OPENAI_MODEL || "gpt-4-turbo-preview",
-    max_tokens: 4096,
+    max_completion_tokens: 4096,
     messages: [
       {
         role: "user",

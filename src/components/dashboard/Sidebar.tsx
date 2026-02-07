@@ -27,9 +27,7 @@ export function Sidebar() {
     >
       {/* Header */}
       <div className="p-4 border-b border-[var(--sidebar-border)] flex items-center justify-between">
-        {!isCollapsed && (
-          <Logo href="/dashboard" size="h-[4.25rem]" className="opacity-90" />
-        )}
+        <Logo href="/dashboard" size="h-[4.25rem]" className="opacity-90" showText={!isCollapsed} textClassName="text-xl text-[var(--sidebar-text-active)]" />
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
           className="p-2 hover:bg-white/5 rounded-lg transition-colors text-[var(--sidebar-text)] hover:text-[var(--sidebar-text-hover)]"

@@ -55,7 +55,7 @@ export default async function LandingPage() {
         {/* Header */}
         <header className="flex items-center justify-between px-6 md:px-10 pt-5 pb-4">
           <div className="animate-fade-down landing-stagger-1">
-            <Logo href="/" size="h-[4.5rem]" bgClassName="bg-white" />
+            <Logo href="/" size="h-[4.5rem]" bgClassName="bg-white" textClassName="text-2xl text-white" />
           </div>
           <Link
             href="/login"

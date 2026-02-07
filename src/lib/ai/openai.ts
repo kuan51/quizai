@@ -33,7 +33,7 @@ export async function generateWithOpenAI(
       },
       { role: "user", content: prompt },
     ],
-    max_tokens: 4096,
+    max_completion_tokens: 4096,
     temperature: 0.7,
     response_format: { type: "json_object" },
   });
@@ -64,7 +64,7 @@ export async function gradeWithOpenAI(
       },
       { role: "user", content: prompt },
     ],
-    max_tokens: 1024,
+    max_completion_tokens: 1024,
     temperature: 0.3,
     response_format: { type: "json_object" },
   });
