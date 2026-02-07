@@ -7,14 +7,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 All commands run from `src/` directory using Bun:
 
 ```bash
-bun run dev          # Dev server on port 3000
-bun run build        # Production build (standalone output)
-bun run lint         # ESLint
-bun run lint:fix     # ESLint with auto-fix
-bun run db:generate  # Generate Drizzle migrations
-bun run db:migrate   # Apply migrations
-bun run db:push      # Push schema changes (dev only)
-bun run db:studio    # Drizzle Studio GUI
+bun run dev             # Dev server on port 3000
+bun run build           # Production build (standalone output)
+bun run lint            # ESLint
+bun run lint:fix        # ESLint with auto-fix
+bun run db:generate     # Generate Drizzle migrations
+bun run db:migrate      # Apply migrations (drizzle-kit)
+bun run db:migrate:run  # Apply migrations (programmatic, used in Docker)
+bun run db:push         # Push schema changes (dev only)
+bun run db:studio       # Drizzle Studio GUI
 ```
 
 Always run `bun run build` to verify changes before committing.
@@ -26,7 +27,7 @@ Always run `bun run build` to verify changes before committing.
 ### Key Layers
 
 - **Auth**: NextAuth v5 (beta.30) with OAuth-only (Google/GitHub/Discord), JWT sessions, email whitelist via `AUTHORIZED_EMAILS` env var. Config in `src/lib/auth.ts`, middleware enforcement in `src/middleware.ts`.
-- **Database**: SQLite via better-sqlite3 + Drizzle ORM. Schema in `src/lib/db/schema.ts`, instance in `src/lib/db/index.ts`. DB file at `src/data/quiz.db`.
+- **Database**: PostgreSQL via @vercel/postgres + Drizzle ORM. Schema in `src/lib/db/schema.ts`, instance in `src/lib/db/index.ts`. Migrations in `src/lib/db/migrations/`. In Docker, migrations run automatically via entrypoint script (`docker/docker-entrypoint.sh`) before app starts.
 - **AI Integration**: Provider router in `src/lib/ai/index.ts` dispatches to Anthropic (`anthropic.ts`), OpenAI (`openai.ts`), or Claude Code CLI (`claude-code.ts`). Adaptive difficulty algorithm in `adaptive.ts`. All user content is sanitized (`src/lib/sanitize.ts`) before AI calls.
 - **File Processing**: Strategy pattern in `src/lib/file-extraction/` handles PDF (unpdf), DOCX (mammoth), images (vision models), and plain text for quiz generation from uploads.
 - **Security**: Rate limiting (`src/lib/rate-limit.ts`, in-memory), input sanitization with prompt injection detection, Zod validation (`src/lib/validations.ts`), CSP/HSTS security headers in `src/next.config.ts`, structured Pino logging with field redaction.
@@ -46,9 +47,26 @@ Always run `bun run build` to verify changes before committing.
 - `src/app/api/ai/route.ts` - AI grading of responses
 - `src/app/api/quizzes/[id]/route.ts` - Quiz CRUD
 
+### Database Migrations
+
+**Initial Setup**:
+1. Set `DATABASE_URL` in `.env.local` (e.g., `postgresql://user:password@localhost:5432/quizai`)
+2. Run migrations: `cd src && bun run db:migrate:run`
+
+**Making Schema Changes**:
+1. Edit `src/lib/db/schema.ts`
+2. Generate migration: `cd src && bun run db:generate`
+3. Review generated SQL in `src/lib/db/migrations/`
+4. Apply migration: `cd src && bun run db:migrate:run`
+5. Commit migration files to git
+
+**Development Shortcuts**: Use `bun run db:push` for rapid prototyping (bypasses migrations, dev only).
+
+**Docker**: Migrations run automatically on container startup via `docker/docker-entrypoint.sh`.
+
 ### Environment Setup
 
-Copy `src/.env.example` to `src/.env.local`. Requires at minimum: one OAuth provider (Google/GitHub/Discord), one AI provider key (Anthropic or OpenAI), and `NEXTAUTH_SECRET`. Set `AUTHORIZED_EMAILS="*"` for development.
+Copy `src/.env.example` to `src/.env.local`. Requires at minimum: one OAuth provider (Google/GitHub/Discord), one AI provider key (Anthropic or OpenAI), `NEXTAUTH_SECRET`, and `DATABASE_URL`. Set `AUTHORIZED_EMAILS="*"` for development.
 
 Docker templates in `docker/.env.development.template` and `docker/.env.production.template`.
 
