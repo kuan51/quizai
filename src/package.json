@@ -11,12 +11,20 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "docker:dev": "docker compose -f ../docker/docker-compose.local.yml up -d",
+    "docker:dev:build": "docker compose -f ../docker/docker-compose.local.yml up -d --build",
+    "docker:dev:down": "docker compose -f ../docker/docker-compose.local.yml down",
+    "docker:dev:logs": "docker compose -f ../docker/docker-compose.local.yml logs -f",
+    "docker:prod": "docker compose -f ../docker/docker-compose.yml up -d",
+    "docker:prod:build": "docker compose -f ../docker/docker-compose.yml up -d --build",
+    "docker:prod:down": "docker compose -f ../docker/docker-compose.yml down",
+    "docker:prod:logs": "docker compose -f ../docker/docker-compose.yml logs -f"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.72.1",
     "@auth/drizzle-adapter": "^1.11.1",
-    "better-sqlite3": "^12.6.2",
+    "@vercel/postgres": "^0.10.0",
     "clsx": "^2.1.1",
     "drizzle-orm": "^0.45.1",
     "lucide-react": "^0.563.0",
@@ -35,7 +43,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

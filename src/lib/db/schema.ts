@@ -1,16 +1,16 @@
-import { sqliteTable, text, integer, real } from "drizzle-orm/sqlite-core";
+import { pgTable, text, integer, real, timestamp, boolean } from "drizzle-orm/pg-core";
 
-export const users = sqliteTable("users", {
+export const users = pgTable("users", {
   id: text("id").primaryKey(),
   email: text("email").notNull().unique(),
   name: text("name"),
   image: text("image"),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  createdAt: timestamp("created_at", { mode: "date" })
     .notNull()
     .$defaultFn(() => new Date()),
 });
 
-export const accounts = sqliteTable("accounts", {
+export const accounts = pgTable("accounts", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .notNull()
@@ -27,22 +27,22 @@ export const accounts = sqliteTable("accounts", {
   session_state: text("session_state"),
 });
 
-export const sessions = sqliteTable("sessions", {
+export const sessions = pgTable("sessions", {
   id: text("id").primaryKey(),
   sessionToken: text("session_token").notNull().unique(),
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
-  expires: integer("expires", { mode: "timestamp" }).notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const verificationTokens = sqliteTable("verification_tokens", {
+export const verificationTokens = pgTable("verification_tokens", {
   identifier: text("identifier").notNull(),
   token: text("token").notNull(),
-  expires: integer("expires", { mode: "timestamp" }).notNull(),
+  expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
-export const quizzes = sqliteTable("quizzes", {
+export const quizzes = pgTable("quizzes", {
   id: text("id").primaryKey(),
   userId: text("user_id")
     .references(() => users.id)
@@ -56,15 +56,15 @@ export const quizzes = sqliteTable("quizzes", {
   questionTypes: text("question_types").notNull(), // JSON array
   studyMaterial: text("study_material"),
   currentDifficultyScore: real("current_difficulty_score").default(0.5),
-  createdAt: integer("created_at", { mode: "timestamp" })
+  createdAt: timestamp("created_at", { mode: "date" })
     .notNull()
     .$defaultFn(() => new Date()),
-  updatedAt: integer("updated_at", { mode: "timestamp" })
+  updatedAt: timestamp("updated_at", { mode: "date" })
     .notNull()
     .$defaultFn(() => new Date()),
 });
 
-export const questions = sqliteTable("questions", {
+export const questions = pgTable("questions", {
   id: text("id").primaryKey(),
   quizId: text("quiz_id")
     .references(() => quizzes.id, { onDelete: "cascade" })
@@ -80,7 +80,7 @@ export const questions = sqliteTable("questions", {
   order: integer("order").notNull(),
 });
 
-export const attempts = sqliteTable("attempts", {
+export const attempts = pgTable("attempts", {
   id: text("id").primaryKey(),
   quizId: text("quiz_id")
     .references(() => quizzes.id, { onDelete: "cascade" })
@@ -91,13 +91,13 @@ export const attempts = sqliteTable("attempts", {
   score: real("score"),
   totalQuestions: integer("total_questions"),
   correctAnswers: integer("correct_answers"),
-  startedAt: integer("started_at", { mode: "timestamp" })
+  startedAt: timestamp("started_at", { mode: "date" })
     .notNull()
     .$defaultFn(() => new Date()),
-  completedAt: integer("completed_at", { mode: "timestamp" }),
+  completedAt: timestamp("completed_at", { mode: "date" }),
 });
 
-export const responses = sqliteTable("responses", {
+export const responses = pgTable("responses", {
   id: text("id").primaryKey(),
   attemptId: text("attempt_id")
     .references(() => attempts.id, { onDelete: "cascade" })
@@ -106,9 +106,9 @@ export const responses = sqliteTable("responses", {
     .references(() => questions.id, { onDelete: "cascade" })
     .notNull(),
   userAnswer: text("user_answer"),
-  isCorrect: integer("is_correct", { mode: "boolean" }),
+  isCorrect: boolean("is_correct"),
   aiGradingFeedback: text("ai_grading_feedback"), // For essay/short answer
-  answeredAt: integer("answered_at", { mode: "timestamp" })
+  answeredAt: timestamp("answered_at", { mode: "date" })
     .notNull()
     .$defaultFn(() => new Date()),
 });
