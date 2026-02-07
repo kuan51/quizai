@@ -29,6 +29,8 @@ bun-debug.log*
 # local env files
 .env*.local
 .env
+docker/.env.development
+docker/.env.production
 
 # Database
 *.db

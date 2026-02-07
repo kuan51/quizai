@@ -16,6 +16,30 @@ if (
   );
 }
 
+// Email whitelist: parse once at module load for O(1) lookups
+// Fail-closed in production: AUTHORIZED_EMAILS must be set (use "*" to allow all)
+const authorizedEmails: Set<string> | null = (() => {
+  const raw = process.env.AUTHORIZED_EMAILS?.trim();
+  if (!raw) {
+    if (process.env.NODE_ENV === "production" && !process.env.NEXT_PHASE) {
+      throw new Error(
+        "AUTHORIZED_EMAILS is required in production. Set to comma-separated emails, or \"*\" to allow all."
+      );
+    }
+    return null;
+  }
+  if (raw === "*") return null;
+  return new Set(
+    raw.split(",").map((e) => e.trim().toLowerCase()).filter(Boolean)
+  );
+})();
+
+function isEmailAuthorized(email: string | null | undefined): boolean {
+  if (!authorizedEmails) return true;
+  if (!email) return false;
+  return authorizedEmails.has(email.toLowerCase());
+}
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Google({
@@ -32,6 +56,16 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }),
   ],
   callbacks: {
+    async signIn({ user, account }) {
+      if (!isEmailAuthorized(user.email)) {
+        logger.security("auth.failed", {
+          message: "Sign-in denied: email not in whitelist",
+          metadata: { provider: account?.provider },
+        });
+        return false;
+      }
+      return true;
+    },
     async jwt({ token, user }) {
       // Persist user id to token on initial sign in
       if (user) {

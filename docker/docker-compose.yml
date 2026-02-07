@@ -3,10 +3,8 @@ services:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    environment:
-      NODE_ENV: production
-      PORT: 3000
-      DATABASE_URL: mysql://quizai:quizai_password@db:3306/quizai
+    env_file:
+      - .env.production
     depends_on:
       - db
     healthcheck:
@@ -19,11 +17,8 @@ services:
   db:
     image: mariadb:11.4
     restart: unless-stopped
-    environment:
-      MARIADB_DATABASE: quizai
-      MARIADB_USER: quizai
-      MARIADB_PASSWORD: quizai_password
-      MARIADB_ROOT_PASSWORD: root_password
+    env_file:
+      - .env.production
     volumes:
       - mariadb_data:/var/lib/mysql
     healthcheck:
@@ -37,8 +32,8 @@ services:
     image: cloudflare/cloudflared:latest
     restart: unless-stopped
     command: tunnel --no-autoupdate run
-    environment:
-      CLOUDFLARED_TOKEN: ${CLOUDFLARED_TOKEN}
+    env_file:
+      - .env.production
     depends_on:
       - app
     healthcheck:
