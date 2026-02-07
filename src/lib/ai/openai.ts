@@ -3,10 +3,21 @@ import { buildQuizPrompt, parseQuizResponse, difficultyInstructions, buildGradin
 import type { QuizGenerationParams } from "./index";
 import type { GeneratedQuiz } from "@/types";
 
-// Models that don't support custom temperature values (reasoning models, gpt-5 family)
+// Reasoning models (o-series, gpt-5 family) have different parameter support
+const REASONING_MODEL_PATTERNS = [/^o\d/, /^gpt-5/];
+
+function isReasoningModel(model: string): boolean {
+  return REASONING_MODEL_PATTERNS.some((p) => p.test(model));
+}
+
+// Reasoning models don't support custom temperature values
 function supportsTemperature(model: string): boolean {
-  const noTempPatterns = [/^o\d/, /^gpt-5/];
-  return !noTempPatterns.some((pattern) => pattern.test(model));
+  return !isReasoningModel(model);
+}
+
+// Reasoning models need higher token budgets (reasoning tokens count against the limit)
+function getMaxCompletionTokens(model: string, defaultTokens: number): number {
+  return isReasoningModel(model) ? Math.max(defaultTokens, 16384) : defaultTokens;
 }
 
 // Lazy initialization to avoid API key errors during build
@@ -41,13 +52,22 @@ export async function generateWithOpenAI(
       },
       { role: "user", content: prompt },
     ],
-    max_completion_tokens: 4096,
+    max_completion_tokens: getMaxCompletionTokens(model, 4096),
     ...(supportsTemperature(model) && { temperature: 0.7 }),
     response_format: { type: "json_object" },
   });
 
-  const content = response.choices[0]?.message?.content;
+  const message = response.choices[0]?.message;
+  const content = message?.content;
   if (!content) {
+    const refusal = message?.refusal;
+    const finishReason = response.choices[0]?.finish_reason;
+    if (refusal) {
+      throw new Error(`OpenAI refused the request: ${refusal}`);
+    }
+    if (finishReason === "length") {
+      throw new Error("OpenAI response truncated: model ran out of tokens");
+    }
     throw new Error("No response from OpenAI API");
   }
 
@@ -74,13 +94,22 @@ export async function gradeWithOpenAI(
       },
       { role: "user", content: prompt },
     ],
-    max_completion_tokens: 1024,
+    max_completion_tokens: getMaxCompletionTokens(model, 1024),
     ...(supportsTemperature(model) && { temperature: 0.3 }),
     response_format: { type: "json_object" },
   });
 
-  const content = response.choices[0]?.message?.content;
+  const message = response.choices[0]?.message;
+  const content = message?.content;
   if (!content) {
+    const refusal = message?.refusal;
+    const finishReason = response.choices[0]?.finish_reason;
+    if (refusal) {
+      throw new Error(`OpenAI refused the request: ${refusal}`);
+    }
+    if (finishReason === "length") {
+      throw new Error("OpenAI response truncated: model ran out of tokens");
+    }
     throw new Error("No response from OpenAI API for grading");
   }
 
