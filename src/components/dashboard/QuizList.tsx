@@ -1,43 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { QuizCard } from "@/components/quiz/QuizCard";
 import { Button } from "@/components/ui/Button";
 import { Plus, Search, Filter } from "lucide-react";
 import Link from "next/link";
 import type { Difficulty } from "@/types";
-
-interface Quiz {
-  id: string;
-  title: string;
-  description: string | null;
-  questionCount: number;
-  difficulty: Difficulty;
-  createdAt: string;
-}
+import { useQuizData } from "@/contexts/QuizDataContext";
 
 export function QuizList() {
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { quizzes, removeQuiz } = useQuizData();
   const [searchTerm, setSearchTerm] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<Difficulty | "all">("all");
-
-  useEffect(() => {
-    fetchQuizzes();
-  }, []);
-
-  const fetchQuizzes = async () => {
-    try {
-      const response = await fetch("/api/quizzes");
-      if (response.ok) {
-        const json = await response.json();
-        setQuizzes(json.data);
-      }
-    } catch {
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleDelete = async (id: string) => {
     try {
@@ -45,7 +19,7 @@ export function QuizList() {
         method: "DELETE",
       });
       if (response.ok) {
-        setQuizzes(quizzes.filter((q) => q.id !== id));
+        removeQuiz(id);
       }
     } catch {
     }
@@ -56,14 +30,6 @@ export function QuizList() {
     const matchesDifficulty = difficultyFilter === "all" || quiz.difficulty === difficultyFilter;
     return matchesSearch && matchesDifficulty;
   });
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
-      </div>
-    );
-  }
 
   if (quizzes.length === 0) {
     return (

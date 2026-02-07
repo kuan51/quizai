@@ -16,7 +16,11 @@ export type SecurityEventType =
   | "quiz.deleted"
   | "ai.request"
   | "ai.response"
-  | "ai.error";
+  | "ai.error"
+  | "file.upload_started"
+  | "file.validation_failed"
+  | "file.extraction_failed"
+  | "file.extraction_complete";
 
 // Create base logger with security-focused configuration
 const baseLogger = pino({
@@ -36,6 +40,9 @@ const baseLogger = pino({
       "session_token",
       "studyMaterial", // May contain sensitive content
       "userAnswer", // Privacy
+      "fileContent", // Uploaded file content
+      "extractedText", // Text extracted from files
+      "base64Data", // Base64 encoded file data
     ],
     censor: "[REDACTED]",
   },

@@ -13,7 +13,7 @@ export function Header({ title, description }: HeaderProps) {
   const { data: session } = useSession();
 
   return (
-    <header className="sticky top-0 z-40 bg-[var(--surface)]/80 backdrop-blur-sm border-b border-[var(--border-subtle)] px-6 py-4 animate-fade-down">
+    <header className="sticky top-0 z-40 bg-[var(--surface)] border-b border-[var(--border-subtle)] px-6 py-4 animate-fade-down">
       <div className="flex items-center justify-between">
         <div>
           {title && (

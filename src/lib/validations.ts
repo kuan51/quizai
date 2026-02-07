@@ -93,6 +93,52 @@ export const GradeRequestSchema = z.object({
 export type GradeRequest = z.infer<typeof GradeRequestSchema>;
 
 /**
+ * File upload limits and validation constants
+ * Used by both client-side (FileUploadZone) and server-side (generate-from-files route)
+ */
+export const FILE_UPLOAD_LIMITS = {
+  maxFiles: 10,
+  maxImageFiles: 5,
+  maxFileSizeBytes: 10 * 1024 * 1024, // 10 MB per file
+  maxTotalSizeBytes: 50 * 1024 * 1024, // 50 MB aggregate
+  acceptedMimeTypes: [
+    "application/pdf",
+    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "text/plain",
+    "text/markdown",
+    "image/png",
+    "image/jpeg",
+  ],
+  acceptedExtensions: ".pdf,.docx,.txt,.md,.png,.jpg,.jpeg",
+} as const;
+
+export const IMAGE_MIME_TYPES = ["image/png", "image/jpeg"] as const;
+
+/**
+ * Schema for file-based quiz generation requests
+ * POST /api/quizzes/generate-from-files
+ * Validates the non-file FormData fields (files validated separately)
+ */
+export const GenerateQuizFromFilesSchema = z.object({
+  title: z
+    .string()
+    .min(1, "Title is required")
+    .max(200, "Title must be 200 characters or less"),
+  questionCount: z.coerce
+    .number()
+    .int("Question count must be an integer")
+    .min(5, "Minimum 5 questions required")
+    .max(50, "Maximum 50 questions allowed"),
+  difficulty: DifficultySchema,
+  questionTypes: z.preprocess(
+    (v) => (typeof v === "string" ? JSON.parse(v) : v),
+    z.array(QuestionTypeSchema).min(1, "At least one question type must be selected")
+  ),
+});
+
+export type GenerateQuizFromFilesRequest = z.infer<typeof GenerateQuizFromFilesSchema>;
+
+/**
  * Helper to format Zod errors for API responses
  */
 function formatZodErrors(error: z.ZodError): string {

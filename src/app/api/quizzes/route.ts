@@ -48,7 +48,12 @@ export async function GET(request: Request) {
 
     return NextResponse.json(
       { data: userQuizzes, page, limit },
-      { headers: getRateLimitHeaders(rateLimit) }
+      {
+        headers: {
+          ...getRateLimitHeaders(rateLimit),
+          "Cache-Control": "private, no-store",
+        },
+      }
     );
   } catch (error) {
     logger.error({ error }, "Error fetching quizzes");

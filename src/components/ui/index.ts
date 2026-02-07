@@ -15,3 +15,5 @@ export type { BadgeProps } from "./Badge";
 
 export { Progress } from "./Progress";
 export type { ProgressProps } from "./Progress";
+
+export { Logo } from "./Logo";

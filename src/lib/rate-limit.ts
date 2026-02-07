@@ -50,6 +50,8 @@ const rateLimitConfigs = {
   api: { windowMs: 60000, maxRequests: 60 }, // 60 per minute
   // Auth endpoints (prevent brute force)
   auth: { windowMs: 300000, maxRequests: 30 }, // 30 per 5 minutes
+  // File upload with extraction (expensive: AI vision calls + processing)
+  fileUpload: { windowMs: 60000, maxRequests: 2 }, // 2 per minute
 };
 
 /**

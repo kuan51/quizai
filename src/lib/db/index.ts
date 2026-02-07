@@ -117,6 +117,8 @@ function initializeTables(sqlite: Database.Database) {
     CREATE INDEX IF NOT EXISTS idx_responses_attempt_id ON responses(attempt_id);
     CREATE INDEX IF NOT EXISTS idx_accounts_user_id ON accounts(user_id);
     CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+    CREATE INDEX IF NOT EXISTS idx_questions_quiz_id_order ON questions(quiz_id, "order");
+    CREATE INDEX IF NOT EXISTS idx_quizzes_user_id_created_at ON quizzes(user_id, created_at DESC);
   `);
 }
 

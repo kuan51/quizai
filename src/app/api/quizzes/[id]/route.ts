@@ -30,26 +30,26 @@ export async function GET(
 
     const { id } = await params;
 
-    // Get the quiz
-    const quiz = await db()
-      .select()
-      .from(quizzes)
-      .where(and(eq(quizzes.id, id), eq(quizzes.userId, session.user.id)))
-      .limit(1);
+    // Single query: get quiz and questions together
+    const [quizRow, quizQuestions] = await Promise.all([
+      db()
+        .select()
+        .from(quizzes)
+        .where(and(eq(quizzes.id, id), eq(quizzes.userId, session.user.id)))
+        .limit(1),
+      db()
+        .select()
+        .from(questions)
+        .where(eq(questions.quizId, id))
+        .orderBy(questions.order),
+    ]);
 
-    if (quiz.length === 0) {
+    if (quizRow.length === 0) {
       return NextResponse.json(
         { error: "Quiz not found" },
         { status: 404, headers: getRateLimitHeaders(rateLimit) }
       );
     }
-
-    // Get the questions
-    const quizQuestions = await db()
-      .select()
-      .from(questions)
-      .where(eq(questions.quizId, id))
-      .orderBy(questions.order);
 
     // Safe JSON parsing for options
     const parsedQuestions = quizQuestions.map((q) => ({
@@ -61,17 +61,22 @@ export async function GET(
 
     // Safe JSON parsing for questionTypes
     const { data: questionTypes } = safeJsonParse<string[]>(
-      quiz[0].questionTypes,
+      quizRow[0].questionTypes,
       []
     );
 
     return NextResponse.json(
       {
-        ...quiz[0],
+        ...quizRow[0],
         questionTypes,
         questions: parsedQuestions,
       },
-      { headers: getRateLimitHeaders(rateLimit) }
+      {
+        headers: {
+          ...getRateLimitHeaders(rateLimit),
+          "Cache-Control": "private, max-age=300, stale-while-revalidate=600",
+        },
+      }
     );
   } catch (error) {
     logger.error({ error }, "Error fetching quiz");

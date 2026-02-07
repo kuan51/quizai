@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { Logo } from "@/components/ui";
 
 export default function AuthLayout({
   children,
@@ -20,9 +20,9 @@ export default function AuthLayout({
             <br />
             Learn with precision.
           </p>
-          <p className="text-sm text-white/40 mt-8 tracking-wider uppercase">
-            QuizAI
-          </p>
+          <div className="mt-8 opacity-40">
+            <Logo size="h-20" />
+          </div>
         </div>
       </div>
 
@@ -30,12 +30,7 @@ export default function AuthLayout({
       <div className="flex-1 flex flex-col bg-[var(--background)]">
         {/* Mobile header */}
         <header className="md:hidden p-6">
-          <Link
-            href="/"
-            className="font-serif text-xl text-[var(--text-primary)]"
-          >
-            QuizAI
-          </Link>
+          <Logo href="/" size="h-[4.25rem]" />
         </header>
 
         {/* Main content */}

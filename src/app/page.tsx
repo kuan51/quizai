@@ -3,6 +3,7 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Sparkles, Gauge, LayoutGrid } from "lucide-react";
 import { AIGenerationAnimation } from "@/components/landing/AIGenerationAnimation";
+import { Logo } from "@/components/ui";
 
 export default async function LandingPage() {
   const session = await auth();
@@ -53,12 +54,9 @@ export default async function LandingPage() {
       <div className="relative z-10 h-screen flex flex-col">
         {/* Header */}
         <header className="flex items-center justify-between px-6 md:px-10 pt-5 pb-4">
-          <Link
-            href="/"
-            className="font-serif text-xl text-white/80 hover:text-white transition-colors duration-300 animate-fade-down landing-stagger-1"
-          >
-            QuizAI
-          </Link>
+          <div className="animate-fade-down landing-stagger-1">
+            <Logo href="/" size="h-[4.5rem]" bgClassName="bg-white" />
+          </div>
           <Link
             href="/login"
             className="text-sm text-white/60 border border-white/15 rounded-full px-4 py-1.5 backdrop-blur-sm hover:bg-white/10 hover:text-white/80 transition-all duration-300 animate-fade-down landing-stagger-1"

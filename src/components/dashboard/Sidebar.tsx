@@ -1,43 +1,19 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import { Plus, Home, LogOut, Menu, X, BookOpen } from "lucide-react";
-import type { Difficulty } from "@/types";
 import { difficultyLabels } from "@/types";
 import { SettingsPopover } from "@/components/dashboard/SettingsPopover";
-
-interface Quiz {
-  id: string;
-  title: string;
-  createdAt: string;
-  difficulty: Difficulty;
-}
+import { Logo } from "@/components/ui";
+import { useQuizData } from "@/contexts/QuizDataContext";
 
 export function Sidebar() {
   const pathname = usePathname();
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const { quizzes } = useQuizData();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    fetchQuizzes();
-  }, []);
-
-  const fetchQuizzes = async () => {
-    try {
-      const response = await fetch("/api/quizzes");
-      if (response.ok) {
-        const json = await response.json();
-        setQuizzes(json.data);
-      }
-    } catch {
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const collapsedClass = isCollapsed
     ? "opacity-0 w-0 overflow-hidden"
@@ -45,18 +21,14 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`h-screen bg-[var(--sidebar-bg)] text-[var(--sidebar-text-active)] flex flex-col transition-all duration-300 ${
+      className={`h-screen bg-[var(--sidebar-bg)] text-[var(--sidebar-text-active)] flex flex-col transition-[width] duration-300 ${
         isCollapsed ? "w-16" : "w-64"
       }`}
     >
       {/* Header */}
       <div className="p-4 border-b border-[var(--sidebar-border)] flex items-center justify-between">
         {!isCollapsed && (
-          <Link href="/dashboard" className="flex items-center">
-            <span className="font-serif text-xl tracking-tight opacity-90">
-              QuizAI
-            </span>
-          </Link>
+          <Logo href="/dashboard" size="h-[4.25rem]" className="opacity-90" />
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -96,7 +68,7 @@ export function Sidebar() {
 
         {/* Quiz List */}
         <div
-          className={`transition-all duration-300 ${
+          className={`transition-[opacity,max-height] duration-300 ${
             isCollapsed
               ? "opacity-0 max-h-0 overflow-hidden"
               : "opacity-100 max-h-[9999px]"
@@ -107,11 +79,7 @@ export function Sidebar() {
               <BookOpen size={12} />
               Your Quizzes
             </h2>
-            {isLoading ? (
-              <div className="text-center py-4">
-                <div className="inline-block w-5 h-5 border-2 border-primary-800 border-t-primary-400 rounded-full animate-spin" />
-              </div>
-            ) : quizzes.length === 0 ? (
+            {quizzes.length === 0 ? (
               <div className="text-center py-4 text-[var(--sidebar-text)] opacity-60 text-sm">
                 No quizzes yet
               </div>

@@ -74,21 +74,8 @@ export async function POST(request: Request) {
       session.user.id
     );
 
-    // Create quiz in database
+    // Create quiz and questions in a single transaction (atomicity + single fsync)
     const quizId = crypto.randomUUID();
-    await db().insert(quizzes).values({
-      id: quizId,
-      userId: session.user.id,
-      title: title || generatedQuiz.title,
-      description: `AI-generated quiz from study material`,
-      questionCount: generatedQuiz.questions.length,
-      difficulty,
-      questionTypes: JSON.stringify(questionTypes),
-      studyMaterial: studyMaterial.substring(0, 10000), // Limit stored material
-      currentDifficultyScore: 0.5,
-    });
-
-    // Insert questions
     const questionInserts = generatedQuiz.questions.map((q, index) => ({
       id: crypto.randomUUID(),
       quizId,
@@ -101,7 +88,20 @@ export async function POST(request: Request) {
       order: index + 1,
     }));
 
-    await db().insert(questions).values(questionInserts);
+    await db().transaction(async (tx) => {
+      await tx.insert(quizzes).values({
+        id: quizId,
+        userId: session.user.id,
+        title: title || generatedQuiz.title,
+        description: `AI-generated quiz from study material`,
+        questionCount: generatedQuiz.questions.length,
+        difficulty,
+        questionTypes: JSON.stringify(questionTypes),
+        studyMaterial: studyMaterial.substring(0, 10000),
+        currentDifficultyScore: 0.5,
+      });
+      await tx.insert(questions).values(questionInserts);
+    });
 
     logger.audit("quiz.create", {
       userId: session.user.id,
