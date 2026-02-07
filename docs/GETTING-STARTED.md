@@ -1,4 +1,6 @@
-# QuizAI Setup Guide
+> [<< Documentation Index](./README.md)
+
+# QuizAI Getting Started Guide
 
 This guide covers the complete setup process for QuizAI, including OAuth provider configuration and AI provider setup.
 
@@ -13,7 +15,7 @@ This guide covers the complete setup process for QuizAI, including OAuth provide
 ### 1. Clone and Install
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/kuan51/quizai.git
 cd quizai/src
 npm install
 ```
@@ -186,6 +188,10 @@ npm start
 
 ## Next Steps
 
-- Read the [API Documentation](./API.md) for endpoint details
-- Check the [Deployment Guide](./DEPLOYMENT.md) for production setup
 - Review the [Architecture](./ARCHITECTURE.md) for system design
+- Read the [API Reference](./API.md) for endpoint details
+- Check the [Deployment Guide](./DEPLOYMENT.md) for production setup
+
+---
+
+**Next**: [Architecture](./ARCHITECTURE.md)

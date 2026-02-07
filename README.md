@@ -26,19 +26,6 @@ QuizAI takes your study materials -- lecture notes, textbook excerpts, slide dec
 - **Security Hardened** -- Input sanitization, rate limiting, Zod validation, CSP headers, and structured security logging.
 - **Docker Deployment** -- Multi-stage Docker build with Cloudflared tunnel support for production.
 
-### Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| Framework | Next.js 16 (App Router, React 19) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| Database | SQLite with Drizzle ORM |
-| Authentication | NextAuth.js v5 (Auth.js) |
-| AI Providers | OpenAI, Anthropic, Claude Code CLI |
-| Icons | Lucide React |
-| Deployment | Docker, Cloudflared |
-
 ---
 
 ## Quick Start
@@ -61,7 +48,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-For detailed setup instructions including OAuth provider configuration, see the [Getting Started Guide](./docs/GETTING_STARTED.md).
+For detailed setup instructions including OAuth provider configuration, see the [Getting Started Guide](./docs/GETTING-STARTED.md).
 
 ---
 
@@ -69,13 +56,15 @@ For detailed setup instructions including OAuth provider configuration, see the 
 
 | Document | Description |
 |----------|-------------|
-| [Getting Started](./docs/GETTING_STARTED.md) | Prerequisites, installation, OAuth setup, AI provider configuration |
+| [Getting Started](./docs/GETTING-STARTED.md) | Prerequisites, installation, OAuth setup, AI provider configuration |
 | [Architecture](./docs/ARCHITECTURE.md) | System design, data model, service architecture, design decisions |
 | [API Reference](./docs/API.md) | REST API endpoints, request/response formats, error handling |
 | [Deployment](./docs/DEPLOYMENT.md) | Docker, docker-compose, Cloudflared tunnels, cloud platforms |
 | [Security](./docs/SECURITY.md) | Security architecture, OWASP alignment, implemented protections |
 | [Contributing](./docs/CONTRIBUTING.md) | Development workflow, code style, PR process |
 | [Domain Ontology](./docs/ONTOLOGY.md) | Comprehensive domain model reference |
+
+See the [Documentation Index](./docs/README.md) for reading paths by audience.
 
 ---
 

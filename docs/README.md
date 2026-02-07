@@ -1,93 +1,30 @@
-# QuizAI - AI-Powered Study Quiz Generator
+# QuizAI Documentation
 
-QuizAI is a NextJS application that generates AI-powered quizzes from study materials to help students prepare for exams and finals. The application uses SQLite for data persistence and supports multiple AI providers (OpenAI/ChatGPT and Anthropic/Claude).
+Welcome to the QuizAI documentation. This is the index for all project documentation. For a project overview and quickstart, see the [root README](../README.md).
 
-## Features
+## Reading Paths
 
-- **AI-Powered Quiz Generation**: Paste your study material and get personalized quizzes
-- **Multiple AI Providers**: Support for OpenAI, Anthropic, and Claude Code CLI
-- **Three Difficulty Modes**:
-  - Mercy Mode - Beginner-friendly with helpful hints
-  - Mental Warfare - Challenging questions for serious learners
-  - Abandon All Hope - Expert-level, no mercy
-- **Five Question Types**:
-  - Multiple Choice
-  - True/False
-  - Short Answer
-  - Essay
-  - Select All That Apply
-- **Adaptive Difficulty**: Questions adjust based on your performance
-- **OAuth Authentication**: Sign in with Google, GitHub, or Discord
-- **Persistent Storage**: SQLite database with file-based persistence
-- **Responsive Design**: Works on desktop and mobile devices
+**New User** -- get the app running and start using it:
+> [Getting Started](./GETTING-STARTED.md) -> [API Reference](./API.md)
 
-## Quick Start
+**Developer / Contributor** -- understand the system and contribute:
+> [Getting Started](./GETTING-STARTED.md) -> [Architecture](./ARCHITECTURE.md) -> [Domain Ontology](./ONTOLOGY.md) -> [API Reference](./API.md) -> [Security](./SECURITY.md) -> [Contributing](./CONTRIBUTING.md)
 
-### Prerequisites
+**Deployer / Operator** -- deploy and secure a production instance:
+> [Getting Started](./GETTING-STARTED.md) -> [Deployment](./DEPLOYMENT.md) -> [Security](./SECURITY.md)
 
-- Node.js 20+
-- npm or yarn
-- At least one OAuth provider configured (Google, GitHub, or Discord)
-- At least one AI provider API key (OpenAI or Anthropic)
+## Document Index
 
-### Local Development
+| Document | Description |
+|----------|-------------|
+| [Getting Started](./GETTING-STARTED.md) | Prerequisites, installation, OAuth setup, AI provider configuration |
+| [Architecture](./ARCHITECTURE.md) | System design, data model, service architecture, design decisions |
+| [Domain Ontology](./ONTOLOGY.md) | Comprehensive domain model -- entities, value objects, services, workflows |
+| [API Reference](./API.md) | REST API endpoints, request/response formats, error handling, rate limits |
+| [Deployment](./DEPLOYMENT.md) | Docker, docker-compose, Cloudflared tunnels, cloud platforms |
+| [Security](./SECURITY.md) | OWASP alignment, authentication, rate limiting, input sanitization, headers |
+| [Contributing](./CONTRIBUTING.md) | Development workflow, code style, PR process |
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd quizai
-   ```
+## Archive
 
-2. Install dependencies:
-   ```bash
-   cd src
-   npm install
-   ```
-
-3. Copy the environment file and configure:
-   ```bash
-   cp .env.example .env.local
-   # Edit .env.local with your configuration
-   ```
-
-4. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-5. Open http://localhost:3000 in your browser
-
-## Project Structure
-
-```
-project-root/
-├── docs/               # Documentation
-└── src/                # NextJS application
-    ├── app/            # Next.js App Router
-    ├── components/     # React components
-    ├── lib/            # Utilities and integrations
-    ├── hooks/          # Custom React hooks
-    ├── types/          # TypeScript definitions
-    └── public/         # Static assets
-```
-
-## Documentation
-
-- [Setup Guide](./SETUP.md) - Detailed setup instructions
-- [API Reference](./API.md) - API endpoint documentation
-- [Deployment Guide](./DEPLOYMENT.md) - Production deployment
-- [Architecture](./ARCHITECTURE.md) - System design and patterns
-
-## Tech Stack
-
-- **Framework**: Next.js 16 with App Router
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS v4
-- **Database**: SQLite with Drizzle ORM
-- **Authentication**: NextAuth.js v5 (Auth.js)
-- **AI Providers**: OpenAI, Anthropic, Claude Code
-- **Icons**: Lucide React
-
-## License
-
-MIT License - See LICENSE file for details.
+Historical review documents from the security hardening phase (February 2026) are preserved in [archive/](./archive/archive-README.md).

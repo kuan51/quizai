@@ -1,3 +1,5 @@
+> [<< Documentation Index](./README.md)
+
 # QuizAI Deployment Guide
 
 This guide covers deploying QuizAI to various environments.
@@ -169,8 +171,13 @@ The application uses structured logging via pino. In development, logs are prett
 - [ ] Keep API keys secure (never commit to git)
 - [ ] Enable firewall rules
 - [ ] Regular security updates
-- [ ] Implement rate limiting
+- [x] Rate limiting (built-in, in-memory sliding window)
+- [x] Security headers (CSP, HSTS, X-Frame-Options, Permissions-Policy)
+- [x] Structured security logging (Pino with field redaction)
+- [x] Input validation (Zod schemas on all API boundaries)
 - [ ] Set up monitoring and alerting
+
+For the full security reference, see [Security](./SECURITY.md).
 
 ---
 
@@ -196,3 +203,7 @@ Verify:
 1. NEXTAUTH_URL matches your domain exactly
 2. OAuth provider redirect URIs are configured
 3. HTTPS is being used in production
+
+---
+
+**Next**: [Security](./SECURITY.md)

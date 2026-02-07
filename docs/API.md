@@ -1,3 +1,5 @@
+> [<< Documentation Index](./README.md)
+
 # QuizAI API Reference
 
 This document describes the REST API endpoints available in QuizAI.
@@ -235,6 +237,7 @@ All error responses follow this format:
 - `400` - Bad Request (missing or invalid parameters)
 - `401` - Unauthorized (not authenticated)
 - `404` - Not Found (resource doesn't exist)
+- `429` - Too Many Requests (rate limit exceeded; includes `Retry-After` header)
 - `500` - Internal Server Error
 
 ---
@@ -263,4 +266,30 @@ All error responses follow this format:
 
 ## Rate Limits
 
-The API currently does not implement rate limiting. For production deployments, consider adding rate limiting at the infrastructure level.
+All API endpoints are rate limited using an in-memory sliding window algorithm. Limits are enforced per-user for API routes and per-IP for authentication routes.
+
+| Endpoint Category | Limit | Window |
+|-------------------|-------|--------|
+| AI Quiz Generation (`POST /api/quizzes/generate`) | 5 requests | 1 minute |
+| AI Grading (`POST /api/ai`) | 20 requests | 1 minute |
+| General API (all other `/api/*`) | 60 requests | 1 minute |
+| Auth Endpoints (`/api/auth/*`) | 30 requests | 5 minutes |
+
+When a rate limit is exceeded, the API returns:
+
+```
+HTTP/1.1 429 Too Many Requests
+Retry-After: <seconds>
+```
+
+```json
+{
+  "error": "Rate limit exceeded. Try again later."
+}
+```
+
+For full security details, see [Security](./SECURITY.md).
+
+---
+
+**Next**: [Deployment](./DEPLOYMENT.md)

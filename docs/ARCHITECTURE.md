@@ -1,3 +1,5 @@
+> [<< Documentation Index](./README.md)
+
 # QuizAI Architecture
 
 This document describes the system architecture, design patterns, and technical decisions in QuizAI.
@@ -60,6 +62,8 @@ src/
 ```
 
 ## Database Schema
+
+For the full domain model including entity definitions, value objects, and business rules, see the [Domain Ontology](./ONTOLOGY.md).
 
 ```
 ┌─────────────┐      ┌─────────────┐      ┌─────────────┐
@@ -246,8 +250,14 @@ RootLayout
 ### API Security
 
 - Protected routes via middleware
-- Rate limiting (recommended for production)
+- Rate limiting (implemented, in-memory sliding window)
 - API key security (server-side only)
+
+### Security Architecture
+
+The security layer spans multiple concerns: input sanitization at the AI boundary, Zod schema validation on all API routes, rate limiting with per-user and per-IP tracking, security headers (CSP, HSTS, X-Frame-Options), and structured security event logging with field redaction.
+
+For the complete security reference including OWASP alignment, rate limit tiers, and known limitations, see [Security](./SECURITY.md).
 
 ## Performance Optimizations
 
@@ -298,3 +308,7 @@ For multiple instances:
 | Drizzle ORM | Type-safe, lightweight, good DX |
 | NextAuth v5 | Industry standard, OAuth support |
 | Lucide | Consistent icons, tree-shakeable |
+
+---
+
+**Next**: [Domain Ontology](./ONTOLOGY.md)
