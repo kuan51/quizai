@@ -25,7 +25,7 @@ export function Logo({
         className={`rounded-full ${bgClassName} p-2 inline-flex items-center justify-center shrink-0 ${size} ${className}`}
       >
         <img
-          src="/quizai-logo-sm.svg"
+          src="/quizai-logo.png"
           alt="QuizAI"
           className="h-3/4 w-auto"
         />
