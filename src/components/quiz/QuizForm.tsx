@@ -242,7 +242,7 @@ export function QuizForm() {
               key={key}
               type="button"
               onClick={() => handleQuestionTypeToggle(key)}
-              className={`px-4 py-2 rounded-sm border-2 transition-all text-sm font-medium ${
+              className={`px-4 py-2 rounded-sm border-2 transition-colors text-sm font-medium ${
                 formData.questionTypes.includes(key)
                   ? "bg-primary-500 text-white border-primary-500"
                   : "border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-primary-400"
