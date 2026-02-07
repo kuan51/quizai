@@ -1,0 +1,7 @@
+docker/
+docs/
+.git/
+*.md
+.env*.local
+.env
+node_modules/
